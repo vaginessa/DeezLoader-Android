@@ -1,0 +1,152 @@
+body{
+    overflow-x: hidden;
+}
+.jumbotron{
+    padding-bottom: 0;
+}
+.brand-logo{
+	font-size: 1.5rem!important;
+}
+.clear-nav{
+    padding: 0;
+}
+.container{
+    margin: 0;
+    max-width: inherit;
+    width: 97%;
+    margin-left: 6px;
+}
+.tab-wrapper{
+    margin: 0;
+}
+#tab_search_form_search{
+    margin: 0;
+}
+td>img{
+    display: inherit;
+    float: left;
+}
+td>.floatRight{
+    float: right;
+}
+.fadeInUp > td{
+    padding: 0;
+    padding-left: 6px;
+    border-bottom: 1px solid black;
+}
+.centrado{
+    text-align: center;
+}
+
+.modal-content>.row{
+    margin-bottom: 0;
+}
+
+.modal-content{
+    overflow: hidden;
+}
+
+.modal h4{
+    margin: 0;
+}
+
+.modal .valign-wrapper{
+    padding-left: 40%;
+}
+.imgArtista, .imgPlay, .imgChart{
+    width: 27%;
+    float: left;
+}
+.detallesArtist, .detallesPlay, .detallesChart{
+    padding-top: 10px;
+}
+
+
+.modal_trackList .modal-content{
+    padding: 10px;
+}
+#modal_trackList, #modal_trackListSelective, #modal_settings, #modal_about{
+    max-height: inherit;
+    height: 85%;
+}
+.mainTab{
+    overflow-y: hidden!important;
+    overflow-x: auto!important;
+}
+#tab_search_form_search label{
+    padding-left: 0;
+}
+.tabs .tab a.active{
+    color: blueviolet;
+}
+.noMargin{
+    margin-bottom: 0;
+}
+#tab_charts_table_charts thead{
+    display: none;
+}
+#rememberCheck{
+    text-align: center;
+}
+#modal_login_btn_login, #modal_login_btn_signup, #modal_login_btn_browser{
+    width: 100%;
+    margin-top: 10px;
+}
+
+.tableRes{
+	table-layout: fixed;
+}
+
+.toRight{
+	text-align: right;
+}
+
+.btnStorage{
+	margin-top: 0;
+	padding-bottom: 1rem;
+}
+
+.btnStorageContainer{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+#storageButtonsContainer{
+	padding-bottom: 1rem;
+}
+
+#modal_settings_btn_defaultPathDownload, #modal_settings_btn_selectPathDownload{
+	height: auto!important;
+}
+#modal_settings_btn_selectPathDownload{
+	margin-bottom: 10px;
+}
+#modal_settings_input_downloadTracksLocation{
+	color: black;
+	border-bottom: 1px dotted black;
+}
+.centerCol{
+	width:1%;
+}
+.chartSong{
+	width:1%;
+}
+.playNum{
+	width: 1px;
+}
+#nav-mobile{
+	padding-top: 22px;
+}
+#button_refresh_playlist_tab{
+	background-color: indigo;
+	color: white;
+}
+
+.trackBtn{
+	padding: 0!important;
+	width: 23%!important;
+}
+
+.trackBtn>label>span{
+	padding-left: 22px!important;
+}

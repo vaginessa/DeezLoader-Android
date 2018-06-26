@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DeezLoader</string>
+    <string name="notificationService">Deezloader server is running</string>
+    <string name="serviceName">DeezLoader Service</string>
+</resources>

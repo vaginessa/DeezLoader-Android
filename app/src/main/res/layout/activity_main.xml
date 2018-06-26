@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.dt3264.deezloader.MainActivity">
+
+    <vcm.github.webkit.proview.ProWebView
+        android:id="@+id/webView"
+        app:cacheMode="cacheElseNetwork"
+        app:locationEnabled="true"
+        app:javascriptEnabled="true"
+        app:locationMode="modeFine"
+        app:nestedScrollingEnabled="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>
