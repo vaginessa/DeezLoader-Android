@@ -17,17 +17,17 @@ android {
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
-        /*ndk {
+        ndk {
             abiFilters "armeabi-v7a", "x86"
-        }*/
+        }
     }
     splits {
         abi {
             enable true
             reset()
             //include works separately of ndk{} and universalApk
-            include "armeabi-v7a", "x86"
-            //universalApk true
+            //include "armeabi-v7a", "x86"
+            universalApk true
         }
     }
     buildTypes {
