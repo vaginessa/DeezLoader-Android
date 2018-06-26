@@ -1,6 +1,6 @@
 # DeezLoader For Android 
 
-# Version 2.0.1 (Lastest version) Recomended version: arm
+# Version 2.0 (Lastest version) Recomended version: arm
 ##### Min android required version: Android 5 (Lollipop)
 ##### Versión mínima de android requerida: Android 5 (Lollipop)
 
