@@ -399,8 +399,9 @@ function showResults_table_track(tracks) {
 			'' + currentResultTrack['album']['title'] + '</br>' +
 			'' + convertDuration(currentResultTrack['duration']) + '</br>' +
 			'</section>'+
+			'<td></td>'+
 			'</tr>');
-		generateDownloadLink(currentResultTrack['link']).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight>');
+		generateDownloadLink(currentResultTrack['link']).appendTo(tableBody.children('tr:last').children('td:last')).wrap('<td class="toRight>');
 
 		tableBody.children('tr:last').find('.preview_controls').hover( function () {
 			$(this).css({opacity: 1});

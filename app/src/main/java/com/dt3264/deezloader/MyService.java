@@ -162,6 +162,7 @@ public class MyService extends Service {
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setContentTitle("Getting info of " + song)
                 .setProgress(100, 0, false)
+                .setTimeoutAfter(60000)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         mBuilder.setOnlyAlertOnce(true);
@@ -176,6 +177,7 @@ public class MyService extends Service {
                 .setContentTitle(songName!=null ? ("Downloading: " + songName) : "Getting track info")
                 .setSubText(progress > 0 ? progress + "%" : "")
                 .setProgress(100, progress, (progress==0))
+                .setTimeoutAfter(60000)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         mBuilder.setOnlyAlertOnce(true);
@@ -183,16 +185,13 @@ public class MyService extends Service {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         // notificationId is a unique int for each notification that you must define
         if(progress<100) notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        else {
-            acabaNotificacion();
-            NOTIFICATION_ID++;
-        }
     }
 
     void notificaYaDescargado(String song){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setContentTitle("Already downloaded: " + song)
+                .setTimeoutAfter(60000)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
         mBuilder.setOnlyAlertOnce(true);
 
@@ -206,6 +205,7 @@ public class MyService extends Service {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_notification)
                 .setContentTitle("Download canceled: " + songName)
+                .setTimeoutAfter(60000)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
         mBuilder.setOnlyAlertOnce(true);
@@ -223,6 +223,7 @@ public class MyService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_LOW);
         mBuilder.setOnlyAlertOnce(true);
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, mBuilder.build());
+        NOTIFICATION_ID++;
     }
 
     /**
@@ -307,6 +308,7 @@ public class MyService extends Service {
         socket.on("downloadReady", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+                acabaNotificacion();
                 //tell system to scan in the song path to add it to the main library
                 File internalFile;
                 String magicUri = sharedPreferences.getString(SHARED_PREFS_NEW_PATH, "");
