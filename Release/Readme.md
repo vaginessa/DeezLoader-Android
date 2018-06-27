@@ -11,7 +11,7 @@
 [DeezLoader-2.0.2-x86.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.2-x86-debug.apk)
 
 ### Option 3: General (This should work on all devices, but size of 38mb / Esta versión devería funcionar en todos los dispositivos)
-[DeezLoader-2.0.2-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.2-General-debug.apk)
+[DeezLoader-2.0.2-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.2-Geberal-debug.apk)
 
 # Changelog
 
