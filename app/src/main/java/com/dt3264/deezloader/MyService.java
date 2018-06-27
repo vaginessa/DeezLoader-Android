@@ -291,7 +291,7 @@ public class MyService extends Service {
             @Override
             public void call(Object... args) {
                 notificaDescargaCancelada();
-                internalPath = null;
+                //internalPath = null;
                 songName = null;
             }
         });
@@ -300,7 +300,7 @@ public class MyService extends Service {
             public void call(Object... args) {
                 String song = (String) args[0];
                 notificaYaDescargado(song);
-                internalPath = null;
+                //internalPath = null;
                 songName = null;
             }
         });
