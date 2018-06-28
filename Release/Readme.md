@@ -15,6 +15,10 @@
 
 # Changelog
 
+- 2.0.3
+    - Signup button at login now works propelly
+    - Improved the way the app starts the server (so it should start in most of the cases)
+
 - 2.0.2
     - Fixed a bug when a song has been downloaded but the notification doesn't  dissapear
 
