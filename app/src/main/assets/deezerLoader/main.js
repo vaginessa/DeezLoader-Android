@@ -2,34 +2,35 @@
 let appConfig;
 const fs = require("fs-extra");
 const path = require('path');
-//const electron = require('electron');
+const electron = require('electron');
 const os = require('os');
-//const app = electron.app;
+const app = electron.app;
 loadSettings();
 
 const theApp = require('./app');
-/*const BrowserWindow = electron.BrowserWindow;
-const WindowStateManager = require('electron-window-state-manager');*/
+//const BrowserWindow = electron.BrowserWindow;
+//const WindowStateManager = require('electron-window-state-manager');
 
 const url = require('url');
 
 let mainWindow;
 
 
-// Create a new instance of the WindowStateManager
-/*const mainWindowState = new WindowStateManager('mainWindow', {
+/* Create a new instance of the WindowStateManager
+const mainWindowState = new WindowStateManager('mainWindow', {
 	defaultWidth: 1280,
 	defaultHeight: 800
 });
-
+*/
 require('electron-context-menu')({
 	showInspectElement: false
 });
-*/
+
 function loadSettings(){
 	var userdata = "";
 	if(process.platform == "android"){
-		userdata = "/storage/emulated/0/Deezloader Remix/";
+		homedata = "/storage/emulated/0";//homedata has to be through /storage/... cuz' the other way it tries at /data/storage/.. which isn't valid
+		userdata = homedata + "/Deezloader Remix/";
 	}else{
 		userdata = app.getPath("appData")+path.sep+"Deezloader Remix"+path.sep;
 	}

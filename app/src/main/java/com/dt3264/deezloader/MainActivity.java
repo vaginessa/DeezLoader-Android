@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
      * their last update and if it was a previous version, it updates the files
      * easy peasy ggg
      */
-    final int actualCompileNumber = 56;
+    final int actualCompileNumber = 58;
     /**
      * reloadNodeAppData when true, updates the node folder in the phone on each start
      * */

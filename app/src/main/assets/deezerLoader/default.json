@@ -9,7 +9,7 @@
 		"createArtistFolder": false,
 		"createAlbumFolder": false,
 		"downloadLocation": "",
-		"artworkSize": 800,
+		"artworkSize": "/1400x1400.jpg",
 		"hifi": false,
 		"padtrck": false,
 		"syncedlyrics": false,
@@ -21,8 +21,6 @@
 		"saveArtwork": false,
 		"logErrors": false,
 		"queueConcurrency": 3,
-		"multitagSeparator": ";",
-		"maxBitrate": "3",
-		"PNGcovers": false
+		"multitagSeparator": ";"
 	}
 }
