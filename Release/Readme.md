@@ -1,19 +1,26 @@
 # DeezLoader For Android 
 
-# Version 2.0.7 (Lastest version) Recomended version: arm
+# Version 2.0.8 (Lastest version) Recomended version: arm
 ##### Min android required version: Android 5 (Lollipop)
 ##### Versión mínima de android requerida: Android 5 (Lollipop)
 
 ### Option 1: arm (This should work in most of the devices, size of 15mb / Esta versión debe funcionar en la mayoría de dispositivos)
-[DeezLoader-2.0.7-armeabi-v7a.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.7-armeabi-v7a-debug.apk)
+[DeezLoader-2.0.8-armeabi-v7a.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-armeabi-v7a-debug.apk)
 
 ### Option 2: x86 (In case the arm doesn't work for you, size of 15mb / Por si la versión arm no te sirvió)
-[DeezLoader-2.0.7-x86.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.7-x86-debug.apk)
+[DeezLoader-2.0.8-x86.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-x86-debug.apk)
 
 ### Option 3: General (This should work on all devices, but size of 38mb / Esta versión devería funcionar en todos los dispositivos)
-[DeezLoader-2.0.7-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.7-General-debug.apk)
+[DeezLoader-2.0.8-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-General-debug.apk)
 
 # Changelog
+- 2.0.8
+    - (Main app, thanks @Tognee) Fixed the login error
+    - Fixed a bug where the settings of the user were not shown when the settings icon was clicked (only on small screens and also only on mobile web browsers)
+    - Added the "coma with space" separator for the tags
+    - Dissabled webView in app (now it should be used in browser as it was planned)
+    - Added link to the telegram group
+    - Added message when an update is available
 
 - 2.0.7
     - Updated to the correct Deezloader 4.0.1
