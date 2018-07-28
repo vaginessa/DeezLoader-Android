@@ -1,19 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.dt3264.deezloader.MainActivity">
+    tools:context="com.dt3264.deezloader.MainActivity"
+    android:orientation="vertical">
 
-    <vcm.github.webkit.proview.ProWebView
-        android:id="@+id/webView"
-        app:cacheMode="cacheElseNetwork"
-        app:locationEnabled="true"
-        app:javascriptEnabled="true"
-        app:locationMode="modeFine"
-        app:nestedScrollingEnabled="true"
+    <TextView
+        android:id="@+id/infoView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/updateTxt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/updateButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/updateButtonText"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/telegramButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/telegramChatButton"
+        android:visibility="gone"/>
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/openAppExternalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/openInExternal"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/openAppInternalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/openInInternal"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/faq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/faq"
+        android:visibility="gone"/>
+
+
+</LinearLayout>

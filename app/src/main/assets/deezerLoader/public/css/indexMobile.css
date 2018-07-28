@@ -150,3 +150,38 @@ td>.floatRight{
 .trackBtn>label>span{
 	padding-left: 22px!important;
 }
+
+#tab_search_form_search, .searchButtons{
+	padding: 0 !important;
+}
+
+#tab_search_form_search_input_searchString{
+margin-left:0;
+margin-right:0;	
+}
+#tab_charts_table_charts_tbody_charts>.row{
+	margin-bottom:0;
+}
+
+.chip{
+	padding: 0;
+}
+.chip>img{
+	float: initial;
+	margin: 0;
+	height: auto;
+	width: auto;
+	border-radius: 0%;
+}
+
+.checkBoxAllSongs{
+	display: grid;
+}
+
+#nav_btn_openSettingsModal{
+	float: none;
+	margin: 0 10px;
+}
+#star{
+	margin-right: 15px;
+}

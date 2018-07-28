@@ -25,6 +25,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -51,9 +52,7 @@ public class MyService extends Service {
     public static boolean hasRequestedNewPath = false;
     static Socket socket;
     Context context;
-    String internalPath, songName, fileName;
     SharedPreferences sharedPreferences;
-    final String SHARED_PREFS_NEW_PATH = "newPath";
     final String CHANNEL_ID = "com.dt3264.Deezloader";
 
     @Override
@@ -149,6 +148,7 @@ public class MyService extends Service {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
+            channel.setSound(null, null);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -156,25 +156,10 @@ public class MyService extends Service {
         }
     }
 
-    int i;
-    void notificaObteniendoDatos(String song){
+    void notificaDescarga(int progress, String songName){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle("Getting info of " + song)
-                .setProgress(100, 0, false)
-                .setTimeoutAfter(60000)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        mBuilder.setOnlyAlertOnce(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-    }
-    void notificaDescarga(int progress){
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle(songName!=null ? ("Downloading: " + songName) : "Getting track info")
+                .setContentTitle("Downloading: " + songName)
                 .setSubText(progress > 0 ? progress + "%" : "")
                 .setProgress(100, progress, (progress==0))
                 .setTimeoutAfter(60000)
@@ -187,39 +172,29 @@ public class MyService extends Service {
         if(progress<100) notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
-    void notificaYaDescargado(String song){
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle("Already downloaded: " + song)
-                .setTimeoutAfter(60000)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        mBuilder.setOnlyAlertOnce(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        NOTIFICATION_ID++;
+    enum songLastStatus{
+        READY,
+        CANCELLED,
+        ALREADY_DOWNLOADED
     }
 
-    void notificaDescargaCancelada(){
+    void acabaNotificacion(String songName, songLastStatus lastStatus){
+        String message = "";
+        switch (lastStatus){
+            case READY:
+                message = "Downloaded: " + songName;
+                break;
+            case CANCELLED:
+                message = "Cancelled: " + songName;
+                break;
+
+            case ALREADY_DOWNLOADED:
+                message = "Already downloaded: " + songName;
+                break;
+        }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle("Download canceled: " + songName)
-                .setTimeoutAfter(60000)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-        mBuilder.setOnlyAlertOnce(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        // notificationId is a unique int for each notification that you must define
-        notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        NOTIFICATION_ID++;
-    }
-
-    void acabaNotificacion(){
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getBaseContext(), CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_notification)
-                .setContentTitle("Downloaded: " + songName)
+                .setContentTitle(message)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
         mBuilder.setOnlyAlertOnce(true);
         NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, mBuilder.build());
@@ -237,112 +212,54 @@ public class MyService extends Service {
         socket.on("siteReady", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                transmitMessage(new Message(1, "Server Ready"));
-                String magicUri = sharedPreferences.getString(SHARED_PREFS_NEW_PATH, "");
-                if (!magicUri.equals("")) {
-                    //Get uri and send it to the app to show it instead the internal path
-                    Uri treeUri = Uri.parse(magicUri);
-                    String realPath = Objects.requireNonNull(treeUri.getPath()).replace("tree", "storage").replace(":", "/");
-                    if(!realPath.endsWith("/")) realPath+="/";
-                    socket.emit("newPath", realPath);
-                }
+                transmitMessage(new Message(1, "Server ready"));
             }
         });
-        socket.on("requestNewPath", new Emitter.Listener() {
+        socket.on("openLink", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                hasRequestedNewPath = true;
-                if(MainActivity.mainDataHandler!=null) transmitMessage(new Message(2, "Request new path"));
-                else socket.emit("message", "Alert", "Select external storage require the app to be open");
-            }
-        });
-        socket.on("useDefaultPath", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                sharedPreferences.edit().putString(SHARED_PREFS_NEW_PATH, "").apply();
+                String url = (String)args[0];
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
         socket.on("progressData", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 Integer progress = 0;
+                String songName;
                 try {
                     progress = (Integer) args[0];
                 }
                 catch(NullPointerException ignored){}
-                notificaDescarga(progress);
+                songName = (String)args[1];
+                notificaDescarga(progress, songName);
             }
         });
-        socket.on("fetchingSongData", new Emitter.Listener() {
+        socket.on("downloadCancelled", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                String song = (String)args[0];
-                notificaObteniendoDatos(song);
+                String songName = (String)args[0];
+                acabaNotificacion(songName, songLastStatus.CANCELLED);
             }
         });
-        socket.on("pathToDownload", new Emitter.Listener() {
+        socket.on("downloadAlreadyExists", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                internalPath = (String) args[0];
-                songName = (String) args[1];
-                fileName = internalPath.replace("/storage/emulated/0/Music/","");
-            }
-        });
-        socket.on("cancelDownload", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                notificaDescargaCancelada();
-                //internalPath = null;
-                songName = null;
-            }
-        });
-        socket.on("alreadyDownloaded", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                String song = (String) args[0];
-                notificaYaDescargado(song);
-                //internalPath = null;
-                songName = null;
+                String songName = (String)args[0];
+                acabaNotificacion(songName, songLastStatus.ALREADY_DOWNLOADED);
             }
         });
         socket.on("downloadReady", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                acabaNotificacion();
-                //tell system to scan in the song path to add it to the main library
+                String internalPath = (String)args[0];
+                String songName = (String)args[1];
                 File internalFile;
-                String magicUri = sharedPreferences.getString(SHARED_PREFS_NEW_PATH, "");
-                /*if(!magicUri.equals("")) {
-                    //Get uri and get permissions for the external dir
-                    Uri treeUri = Uri.parse(magicUri);
-                    DocumentFile pickedDir = DocumentFile.fromTreeUri(getBaseContext(), treeUri);
-                    grantUriPermission(getPackageName(), treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    getContentResolver().takePersistableUriPermission(treeUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                    //Copy file with dir with permissions given
-                    copyFile("/storage/emulated/0/Music/", fileName, fileName, pickedDir);
-                    //log the copy
-                    String realPath = Objects.requireNonNull(treeUri.getPath()).replace("tree", "storage").replace(":", "/");
-                    if(!realPath.endsWith("/")) realPath+="/";
-                    socket.emit("log", "From" + "/storage/emulated/0/Music/" + fileName + " to " + realPath + fileName);
-                    //delete source file after the copy was completed
-                    internalFile = new File(internalPath);
-                    internalFile.delete();
-                    //and scan the output file
-                    File externalFile = new File("/storage/" + pickedDir.getName() + "/" + fileName);
-                    scanNewSongExternal(externalFile);
-                }
-                else {*/
-                    internalFile = new File(internalPath);
-                    scanNewSongInternal(Uri.fromFile(internalFile));
-                //}
-                //internalPath = null;
-                //songName = null;
-            }
-        });
-        socket.on("exit", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                stopMyService();
+                internalFile = new File(internalPath);
+                scanNewSongInternal(Uri.fromFile(internalFile));
+                acabaNotificacion(songName, songLastStatus.READY);
             }
         });
         socket.connect();

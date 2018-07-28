@@ -8,8 +8,8 @@ const os = require('os');
 loadSettings();
 
 const theApp = require('./app');
-//const BrowserWindow = electron.BrowserWindow;
-//const WindowStateManager = require('electron-window-state-manager');
+/*const BrowserWindow = electron.BrowserWindow;
+const WindowStateManager = require('electron-window-state-manager');*/
 
 const url = require('url');
 
@@ -24,14 +24,14 @@ let mainWindow;
 
 require('electron-context-menu')({
 	showInspectElement: false
-});*/
-
+});
+*/
 function loadSettings(){
 	var userdata = "";
 	if(process.platform == "android"){
-		userdata = homedata = "/storage/emulated/0/DeezLoader";//homedata has to be through /storage/... cuz' the other way it tries at /data/storage/.. which isn't valid
+		userdata = "/storage/emulated/0/Deezloader Remix/";
 	}else{
-		userdata = app.getPath("appData")+path.sep+"Deezloader"+path.sep;
+		userdata = app.getPath("appData")+path.sep+"Deezloader Remix"+path.sep;
 	}
 
 	if(!fs.existsSync(userdata+"config.json")){
@@ -49,43 +49,43 @@ function loadSettings(){
 		appConfig = require(userdata+path.sep+"config.json");
 	}
 }
+/*
+function createWindow () {
 
-/*function createWindow () {
-	// Create the browser window.
-	mainWindow = new BrowserWindow({
-		width: mainWindowState.width,
-		height: mainWindowState.height,
-		x: mainWindowState.x,
-		y: mainWindowState.y,
-		alwaysOnTop: false,
-		frame: false,
-		icon: __dirname + "/icon.png",
-		minWidth: 415,
-		minHeight: 32,
-		show:false
-	});
+	if (!(process.argv.indexOf("-s")>-1 || process.argv.indexOf("--server")>-1)){
+		// Create the browser window.
+		mainWindow = new BrowserWindow({
+			width: mainWindowState.width,
+			height: mainWindowState.height,
+			x: mainWindowState.x,
+			y: mainWindowState.y,
+			alwaysOnTop: false,
+			frame: false,
+			icon: __dirname + "/icon.png",
+			minWidth: 415,
+			minHeight: 32,
+			backgroundColor: "#23232c"
+		});
 
-	mainWindow.setMenu(null);
-	mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-  })
+		mainWindow.setMenu(null);
 
-	// and load the index.html of the app.
-	mainWindow.loadURL('http://localhost:' + appConfig.serverPort);
+		// and load the index.html of the app.
+		mainWindow.loadURL('http://localhost:' + appConfig.serverPort);
 
-	mainWindow.on('closed', function () {
-		mainWindow = null;
-	});
+		mainWindow.on('closed', function () {
+			mainWindow = null;
+		});
 
-	// Check if window was closed maximized and restore it
-	if (mainWindowState.maximized) {
-		mainWindow.maximize();
+		// Check if window was closed maximized and restore it
+		if (mainWindowState.maximized) {
+			mainWindow.maximize();
+		}
+
+		// Save current window state
+		mainWindow.on('close', () => {
+			mainWindowState.saveState(mainWindow);
+		});
 	}
-
-	// Save current window state
-	mainWindow.on('close', () => {
-		mainWindowState.saveState(mainWindow);
-	});
 }
 
 app.on('ready', createWindow);
@@ -100,5 +100,4 @@ app.on('activate', function () {
 		createWindow();
 	}
 });
-
 */

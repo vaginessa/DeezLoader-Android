@@ -4,6 +4,7 @@ import android.Manifest;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -19,12 +20,19 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.*;
 import java.util.Objects;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -35,7 +43,11 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.plugins.RxJavaPlugins;
 import io.reactivex.schedulers.Schedulers;
 import io.socket.client.Socket;
-import vcm.github.webkit.proview.ProWebView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -46,27 +58,80 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("node");
     }
 
+    /**
+     * actualCompileNumber saves in the users phone
+     * their last update and if it was a previous version, it updates the files
+     * easy peasy ggg
+     */
+    final int actualCompileNumber = 56;
+    /**
+     * reloadNodeAppData when true, updates the node folder in the phone on each start
+     * */
+    final boolean reloadNodeAppData = false;
+    final String actualVersion = "2.0.8";
+    final String url = "http://localhost:1730";
+    final String telegramUrl = "https://t.me/joinchat/EPuiFwzIphNKHgjOvPlBCQ";
+    final String lastCompileSharedPrefs="lastCompile";
+    int lastCompile;
+    SharedPreferences sharedPreferences;
+
+    /**
+     * UI Elements
+     */
     Context context;
     Snackbar snackbar;
-    ProWebView webView;
-    SharedPreferences sharedPreferences;
-    final String url = "http://localhost:1730";
-    String SHARED_PREFS_NEW_PATH = "newPath";
+    @BindView(R.id.openAppExternalButton)
+    Button mainExternalButton;
+    @BindView(R.id.openAppInternalButton)
+    Button mainInternalButton;
+    @BindView(R.id.telegramButton)
+    Button telegramButton;
+    @BindView(R.id.updateButton)
+    Button updateButton;
+    @BindView(R.id.infoView)
+    TextView infoView;
+    @BindView(R.id.updateTxt)
+    TextView updateTxt;
+    @BindView(R.id.faq)
+    TextView faqTxt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Objects.requireNonNull(getSupportActionBar()).hide();
         preparaHandler();
-        webView = findViewById(R.id.webView);
-        webView.setActivity(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            webView.setRendererPriorityPolicy(WebView.RENDERER_PRIORITY_IMPORTANT, true);
-        }
-        snackbar = Snackbar.make(webView, "Prepairing server", Snackbar.LENGTH_INDEFINITE);
+        infoView.setText("Actual version: " + actualVersion + '\n' + getText(R.string.serverLoadingText)  + '\n');
+        telegramButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(telegramUrl));
+                startActivity(i);
+            }
+        });
+        mainExternalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            }
+        });
+        mainInternalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getBaseContext(), BrowserActivity.class);
+                startActivity(i);
+            }
+        });
+        snackbar = Snackbar.make(infoView, "Preparing server data", Snackbar.LENGTH_INDEFINITE);
         snackbar.show();
+        run();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        lastCompile = sharedPreferences.getInt(lastCompileSharedPrefs, 0);
         if (savedInstanceState == null) compruebaPermisos();
         else muestraPagina();
     }
@@ -111,9 +176,48 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ProWebView webView = findViewById(R.id.webView);
-                webView.loadUrl(url);
+                Button telegramButton = findViewById(R.id.telegramButton);
+                Button externalButton = findViewById(R.id.openAppExternalButton);
+                Button internalButton = findViewById(R.id.openAppInternalButton);
+                TextView faqTxt = findViewById(R.id.faq);
+                telegramButton.setVisibility(View.VISIBLE);
+                externalButton.setVisibility(View.VISIBLE);
+                internalButton.setVisibility(View.VISIBLE);
+                faqTxt.setVisibility(View.VISIBLE);
                 snackbar.dismiss();
+                infoView.setText("Actual version: " + actualVersion + '\n' + getText(R.string.serverReady) + '\n');
+            }
+        });
+    }
+
+    String[] pasteResult;
+    OkHttpClient client = new OkHttpClient();
+    void run() {
+        Request request = new Request.Builder().url("https://pastebin.com/raw/PaPQVDwv").build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) { }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                pasteResult = response.body().string().split("\n");
+                if(!actualVersion.equals(pasteResult[0].trim())) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateTxt.setText("A new update (" + pasteResult[0].trim() + ") is available.\nChanges: \n" + pasteResult[2]);
+                            updateButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent i = new Intent(Intent.ACTION_VIEW);
+                                    i.setData(Uri.parse(pasteResult[1]));
+                                    startActivity(i);
+                                }
+                            });
+                            updateTxt.setVisibility(View.VISIBLE);
+                            updateButton.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
             }
         });
     }
@@ -184,26 +288,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        webView.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == 1234){
-            Uri treeUri = data.getData();
-            sharedPreferences.edit().putString(SHARED_PREFS_NEW_PATH, Objects.requireNonNull(treeUri).toString()).apply();
-            String realPath = Objects.requireNonNull(treeUri.getPath()).replace("tree", "storage").replace(":", "/");
-            if(!realPath.endsWith("/")) realPath+="/";
-            transmitMessage(new Message(3, realPath));
-        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        webView.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        webView.onRequestPermissionResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 100: {
                 // If request is cancelled, the result arrays are empty.
@@ -223,14 +317,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        webView.onSavedInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        webView.onDestroy();
-        //EventBus.getDefault().unregister(this);
     }
 
     /**
@@ -244,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
      * Check server files methods
      */
     private void checkIsApkUpdated(){
-        if (wasAPKUpdated()) {
+        if (reloadNodeAppData || lastCompile != actualCompileNumber) {
             //Recursively delete any existing nodejs-project.
             String nodeDir = getApplicationContext().getFilesDir().getAbsolutePath() + "/deezerLoader";
             File nodeDirReference = new File(nodeDir);
@@ -257,30 +348,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean wasAPKUpdated() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        long previousLastUpdateTime = prefs.getLong("NODEJS_MOBILE_APK_LastUpdateTime", 0);
-        long lastUpdateTime = 1;
-        try {
-            PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
-            lastUpdateTime = packageInfo.lastUpdateTime;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return (lastUpdateTime != previousLastUpdateTime);
-    }
-
     private void saveLastUpdateTime() {
-        long lastUpdateTime = 1;
-        try {
-            PackageInfo packageInfo = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0);
-            lastUpdateTime = packageInfo.lastUpdateTime;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("NODEJS_MOBILE_APK_LastUpdateTime", lastUpdateTime);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(lastCompileSharedPrefs, actualCompileNumber);
         editor.apply();
     }
 
