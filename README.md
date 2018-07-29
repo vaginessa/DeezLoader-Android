@@ -15,12 +15,17 @@ Now you can forget of the termux methodto run this tool, just download the [apk]
 - Always download the last release [here](https://gitlab.com/DT3264/DeezLoader-Android/tree/master/Release) 
 
 - P.D: I don't keep links to previous versions since it's easier to have the lastest version online for you)
+-
+
+# How to build (prerequisite)
+ - Download the lastest version of [nodeJS mobile](https://github.com/janeasystems/nodejs-mobile/releases)
+ - Copy the files form the rar in the following path "root Of The Project / app / libnode"
 
 ##### Min android required version: Android 5(Lollipop)
 
 # Crashes
 
-In case there's a crash in the app, a notification will be displayed, open it and send it to the following mail "cernadaniel32@gmail.com" or to [this telegram group](https://t.me/joinchat/EPuiFwzIphPHwMn8BC8HEA) to keep improving the app.
+In case there's a crash in the app, a notification will be displayed, open it and send it to [this telegram group](https://t.me/joinchat/EPuiFwzIphPHwMn8BC8HEA) to keep improving the app.
 
 # Credits
 ## Original Developer
