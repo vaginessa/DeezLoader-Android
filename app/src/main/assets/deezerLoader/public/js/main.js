@@ -33,10 +33,9 @@ $('#modal_login_btn_login').click(function () {
 	$('#modal_login_btn_login').html("Logging in...");
 	var username = $('#modal_login_input_username').val();
 	var password = $('#modal_login_input_password').val();
-	var autologin = $('#modal_login_input_autologin').prop("checked");
 	//Send to the software
 	Username = username;
-	socket.emit('login', username, password,autologin);
+	socket.emit('login', username, password, true);
 });
 
 socket.on("autologin",function(username,password){

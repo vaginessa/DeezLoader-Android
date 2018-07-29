@@ -122,14 +122,10 @@ function aldecrypt(encoded) {
 
 // START sockets clusterfuck
 io.sockets.on('connection', function (socket) {
-	io.sockets.emit("siteReady");
 	socket.downloadQueue = [];
 	socket.currentItem = null;
 	socket.lastQueueId = null;
 
-	socket.on('openLink', function(link){
-	    io.sockets.emit("openLink", link);
-	});
 	socket.on("login", function (username, password, autologin) {
 		Deezer.init(username, password, function (err) {
 			if(err){
@@ -178,37 +174,6 @@ io.sockets.on('connection', function (socket) {
 		});
 		return;
 	});
-	
-	///start app listeners
-	socket.on("message", function(title, message){
-	    io.sockets.emit("message", title, message)
-	});
-	socket.on("exit", function(){
-	    io.sockets.emit('exit');
-	});
-	socket.on("requestNewPath", function(){
-		io.sockets.emit("requestNewPath");
-	});
-	socket.on('newPath', function(path){
-		let settings = configFile.userDefined;
-		if (!settings.downloadLocation) {
-			settings.downloadLocation = mainFolder;
-		}
-		io.sockets.emit('newPath', path)
-	});
-	socket.on('openLinkNewVersion', function(url){
-		io.sockets.emit('newVersion', url);
-	});
-	socket.on('openInBrowser', function(url){
-    		io.sockets.emit('openInBrowser', url);
-    	});
-	socket.on("useDefaultPath", function(){
-		io.sockets.emit("useDefaultPath");
-	});
-	socket.on("newPath", function(newPath){
-		io.sockets.emit("newPath", newPath);
-	});
-	///end app listeners
 
 	let lastPercentage=100;
 	Deezer.onDownloadProgress = function (track, progress) {
@@ -225,9 +190,10 @@ io.sockets.on('connection', function (socket) {
 		} else {
 			complete = track.FILESIZE_MP3_128 || 0;
 		}
-		if(parseInt((progress/complete)*100)%101!==lastPercentage){
-			lastPercentage = parseInt((progress/complete)*100)%101;
-			io.sockets.emit('progressData', lastPercentage);
+		let totalProgress = parseInt((progress/complete)*100);
+		if(totalProgress!==lastPercentage){
+			lastPercentage = totalProgress;
+			io.sockets.emit("progressData", lastPercentage, track.SNG_TITLE + ' ' +  track.ART_NAME);
 		}
 
 		if(track.trackSocket.currentItem.type == "track"){
@@ -1062,7 +1028,6 @@ io.sockets.on('connection', function (socket) {
 							metadata.date = track["PHYSICAL_RELEASE_DATE"];
 						}
 					}
-					io.sockets.emit("fetchingSongData", metadata.title + " - " + metadata.artist);
 					let filename = fixName(`${metadata.artist} - ${metadata.title}`);
 					if (settings.filename) {
 						filename = fixName(settingsRegex(metadata, settings.filename, settings.playlist));
@@ -1116,10 +1081,9 @@ io.sockets.on('connection', function (socket) {
 						}
 					}
 					logger.logs('Info','Downloading file to ' + writePath);
-					io.sockets.emit('pathToDownload', writePath, metadata.title + ' - ' + metadata.artist);
 					if (fs.existsSync(writePath)) {
 						logger.logs('Info',"Already downloaded: " + metadata.artist + ' - ' + metadata.title);
-						io.sockets.emit('alreadyDownloaded', metadata.title + ' - ' + metadata.artist);
+						io.sockets.emit("downloadAlreadyExists", metadata.title + ' - ' + metadata.artist);
 						callback();
 						return;
 					}
@@ -1170,6 +1134,7 @@ io.sockets.on('connection', function (socket) {
 							if (err && err.message == "aborted") {
 								socket.currentItem.cancelFlag = true;
 								logger.logs('Info',"Track got aborted");
+								io.sockets.emit("downloadCancelled", metadata.title + " - " + metadata.artist);
 								callback();
 								return;
 							}
@@ -1193,6 +1158,7 @@ io.sockets.on('connection', function (socket) {
 								}
 							}
 							logger.logs('Info',"Downloaded: " + metadata.artist + " - " + metadata.title);
+							io.sockets.emit("downloadReady", writePath, metadata.title + " - " + metadata.artist);
 							metadata.artist = '';
 							var first = true;
 							artistArray = []
@@ -1388,7 +1354,6 @@ io.sockets.on('connection', function (socket) {
 								fs.writeFileSync(writePath, taggedSongBuffer);
 								fs.remove(tempPath);
 							}
-							io.sockets.emit("downloadReady", "ready");
 							callback();
 						});
 					}
@@ -1409,6 +1374,11 @@ io.sockets.on('connection', function (socket) {
 		}
 		return exists;
 	}
+	
+	io.sockets.emit("siteReady");
+	socket.on('openLink', function(link){
+	    io.sockets.emit("openLink", link);
+	});
 });
 
 // Helper functions
