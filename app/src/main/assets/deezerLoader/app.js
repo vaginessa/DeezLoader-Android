@@ -193,7 +193,7 @@ io.sockets.on('connection', function (socket) {
 		let totalProgress = parseInt((progress/complete)*100);
 		if(totalProgress!==lastPercentage){
 			lastPercentage = totalProgress;
-			io.sockets.emit("progressData", lastPercentage, track.SNG_TITLE + ' ' +  track.ART_NAME);
+			io.sockets.emit("progressData", lastPercentage, track.SNG_TITLE + ' - ' +  track.ART_NAME);
 		}
 
 		if(track.trackSocket.currentItem.type == "track"){
@@ -1134,7 +1134,9 @@ io.sockets.on('connection', function (socket) {
 							if (err && err.message == "aborted") {
 								socket.currentItem.cancelFlag = true;
 								logger.logs('Info',"Track got aborted");
-								io.sockets.emit("downloadCancelled", metadata.title + " - " + metadata.artist);
+								setTimeout(function () {
+									io.sockets.emit("downloadCancelled", metadata.title + " - " + metadata.artist);
+								}, 2000);
 								callback();
 								return;
 							}

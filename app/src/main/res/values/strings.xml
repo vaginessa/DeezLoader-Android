@@ -8,17 +8,6 @@
     <string name="telegramChatButton">Telegram Chat Link -> Bugs / Questions / etc.</string>
     <string name="openInExternal">Open deezLoader in an external browser</string>
     <string name="openInInternal">Open deezLoader here</string>
-    <string name="showFAQ">Show FAQ</string>
-    <string name="faq">FAQ:\n
-        Q) The login button doesn\'t work. \n
-        A) The known fixes are: \n
-        \t1) Use a vpn to login\n
-        \t2) Click that goddamn button too many times until it shows \'Loggin in\'\n\n
-        Q) Downloads doesn\'t start. FIX\n
-        A) Follow the steps (That\'s the only known fix): \n
-        \t1) In the internal memory, delete the Deezloader Remix folder.\n
-        \t2) Uninstall deezerloader\n
-        \t3) Reinstall deezloader.\n
-
+    <string name="faq">
     </string>
 </resources>

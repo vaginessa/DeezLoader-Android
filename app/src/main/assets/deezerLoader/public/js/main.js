@@ -824,10 +824,10 @@ socket.on('addToQueue', function (data) {
 			'<td class="queueSize">' + data.size + '</td>' +
 			'<td class="queueDownloaded">' + data.downloaded + '</td>' +
 			'<td class="queueFailed">' + data.failed + '</td>' +
-			'<td><div class="progress"><div class="indeterminate"></div></div></td>' +
+			'<td class="progressText"><div class="progress"><div class="indeterminate"></div></div></td>' +
 			'</tr>');
 
-	var btn_remove = $('<a href="#" class="btn-flat waves-effect"><i class="material-icons">remove</i></a>');
+	var btn_remove = $('<a href="#" class="btn-flat waves-effect" style="padding: 0;"><i class="material-icons">remove</i></a>');
 
 	$(btn_remove).click(function (ev) {
 
@@ -876,7 +876,8 @@ socket.on("downloadProgress", function (data) {
 	//data.percentage -> float/double, percentage
 	//updated in 1% steps
 
-	$('#' + data.queueId).find('.determinate').css('width', data.percentage + '%');
+	//$('#' + data.queueId).find('.determinate').css('width', data.percentage + '%');
+	$('#' + data.queueId).find('.progressText').html(parseInt(data.percentage) + '%');
 
 });
 
