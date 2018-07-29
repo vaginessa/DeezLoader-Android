@@ -7,9 +7,19 @@ if(typeof mainApp !== "undefined"){
 	var defaultDownloadLocation = mainApp.defaultDownloadDir;
 }
 let userSettings = [];
+let Username = "";
 
 let preview_track = document.getElementById('preview-track');
 let preview_stopped = true;
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
 
 socket.emit("autologin");
 
@@ -23,8 +33,10 @@ $('#modal_login_btn_login').click(function () {
 	$('#modal_login_btn_login').html("Logging in...");
 	var username = $('#modal_login_input_username').val();
 	var password = $('#modal_login_input_password').val();
+	var autologin = $('#modal_login_input_autologin').prop("checked");
 	//Send to the software
-	socket.emit('login', username, password,true);
+	Username = username;
+	socket.emit('login', username, password,autologin);
 });
 
 socket.on("autologin",function(username,password){
@@ -37,25 +49,22 @@ socket.on("autologin",function(username,password){
 	M.updateTextFields();
 	socket.emit('login', username, password,false);
 });
-
-socket.on("login", function (data) {
-	if (!data.error) {
-		$("#modal_settings_username").html(data.username);
-		$("#modal_settings_picture").attr("src",data.picture);
-		$("#side_user").text(data.username);
-		$("#side_avatar").attr("src",data.picture);
-		$("#side_email").text(Username);
+socket.on("login", function (errmsg) {
+	if (errmsg == "none") {
+		$("#modal_settings_username").html(Username);
 		$('#initializing').addClass('animated fadeOut').on('webkitAnimationEnd', function () {
 			$(this).css('display', 'none');
 			$(this).removeClass('animated fadeOut');
 		});
-		// Load top charts list for countries
-		socket.emit("getChartsCountryList", {selected: userSettings.chartsCountry});
-		socket.emit("getChartsTrackListByCountry", {country: userSettings.chartsCountry});
-		socket.emit("getMePlaylistList", {});
+
+	// Load top charts list for countries
+	socket.emit("getChartsCountryList", {selected: userSettings.chartsCountry});
+	socket.emit("getChartsTrackListByCountry", {country: userSettings.chartsCountry});
+	socket.emit("getMePlaylistList", {});
+
 	}else{
-			$('#login-res-text').text(data.error);
-			setTimeout(function(){$('#login-res-text').text("");},3000);
+			$('#login-res-text').text(errmsg);
+			setTimeout(function(){$('#login-res-text').text("");},1000);
 	}
 	$('#modal_login_btn_login').attr("disabled", false);
 	$('#modal_login_btn_login').html("Login");
@@ -75,19 +84,6 @@ $(document).ready(function () {
 	M.AutoInit();
 	preview_track.volume = 0;
 
-	$('.sidenav').sidenav({
-		edge: 'right'
-	});
-
-	var tabs = M.Tabs.getInstance(document.getElementById("tab-nav"));
-
-	$('.sidenav_tab').click((e)=>{
-		e.preventDefault;
-		$(e.currentTarget).addClass("active");
-		tabs.select($(e.currentTarget).attr('tab-id'));
-		tabs.updateTabIndicator();
-	})
-
 	$(window).scroll(function () {
 		if ($(this).scrollTop() > 100) {
 			$('#btn_scrollToTop a').removeClass('scale-out').addClass('scale-in');
@@ -102,7 +98,9 @@ $(document).ready(function () {
 	});
 
 	$("#button_refresh_playlist_tab").click(function(){
-		$("table_personal_playlists").html("");
+		$("#table_personal_playlists").html("");
+		$("#table_personal_playlists").css("visibility", "collapse");
+		$("#table_personal_playlists_loadingIndicator").css("visibility", "visible");
 		socket.emit("getMePlaylistList", {});
 	})
 
@@ -118,15 +116,15 @@ $(document).ready(function () {
 			preview_stopped = true;
 			$("*").removeProp("playing");
 			$('.preview_controls').text("play_arrow");
-			$('.preview_playlist_controls').text("play_arrow");
 		}
 	});
 
 	$('.modal').modal();
-	socket.emit("getUserSettings");
+
 });
 
 // Load settings
+socket.emit("getUserSettings");
 socket.on('getUserSettings', function (data) {
 	userSettings = data.settings;
 	console.log('Settings refreshed');
@@ -171,11 +169,7 @@ $('#modal_settings_btn_saveSettings').click(function () {
 		extendedTags: $('#modal_settings_cbox_extendedTags').is(':checked'),
 		partOfSet: $('#modal_settings_cbox_partOfSet').is(':checked'),
 		chartsCountry: $('#modal_settings_select_chartsCounrty').val(),
-		spotifyUser: $('#modal_settings_input_spotifyUser').val(),
-		saveArtwork: $('#modal_settings_cbox_saveArtwork').is(':checked'),
-		logErrors: $('#modal_settings_cbox_logErrors').is(':checked'),
-		queueConcurrency: parseInt($('#modal_settings_number_queueConcurrency').val()),
-		multitagSeparator: $('#modal_settings_select_multitagSeparator').val()
+		spotifyUser: $('#modal_settings_input_spotifyUser').val()
 	};
 
 	// Send updated settings to be saved into config file
@@ -192,11 +186,7 @@ $('#modal_settings_btn_defaultSettings').click(function () {
 });
 
 $('#modal_login_btn_signup').click(function(){
-	if(typeof shell != 'undefined'){
-		shell.openExternal("https://www.deezer.com/register");
-	}else{
-		window.open("https://www.deezer.com/register");
-	}
+	socket.emit("openLink", "https://www.deezer.com/register");
 });
 
 $('#modal_settings_btn_logout').click(function () {
@@ -230,10 +220,6 @@ function fillSettingsModal(settings) {
 	$('#modal_settings_cbox_partOfSet').prop('checked', settings.partOfSet);
 	$('#modal_settings_select_chartsCounrty').val(settings.chartsCountry).formSelect();
 	$('#modal_settings_input_spotifyUser').val(settings.spotifyUser);
-	$('#modal_settings_cbox_saveArtwork').prop('checked', settings.saveArtwork);
-	$('#modal_settings_cbox_logErrors').prop('checked', settings.logErrors);
-	$('#modal_settings_number_queueConcurrency').val(settings.queueConcurrency);
-	$('#modal_settings_select_multitagSeparator').val(settings.multitagSeparator).formSelect();
 
 	M.updateTextFields()
 }
@@ -241,14 +227,54 @@ function fillSettingsModal(settings) {
 
 //#############################################MODAL_MSG##############################################\\
 function message(title, message) {
+
 	$('#modal_msg_title').html(title);
+
 	$('#modal_msg_message').html(message);
+
 	$('#modal_msg').modal('open');
+
 }
 
 //****************************************************************************************************\\
 //************************************************TABS************************************************\\
 //****************************************************************************************************\\
+
+//###############################################TAB_URL##############################################\\
+$('#tab_url_form_url').submit(function (ev) {
+
+	ev.preventDefault();
+
+	var urls = $("#song_url").val().split(";");
+	console.log(urls);
+	for(var i = 0; i < urls.length; i++){
+		var url = urls[i];
+		console.log(url);
+
+		if (url.length == 0) {
+			message('Blank URL Field', 'You need to insert an URL to download it!');
+			return false;
+		}
+
+		//Validate URL
+		if (url.indexOf('deezer.com/') < 0 && url.indexOf('open.spotify.com/') < 0 && url.indexOf('spotify:') < 0) {
+			message('Wrong URL', 'The URL seems to be wrong. Please check it and try it again.');
+			return false;
+		}
+
+		if (url.indexOf('?') > -1) {
+			url = url.substring(0, url.indexOf("?"));
+		}
+
+		if (url.indexOf('open.spotify.com/') >= 0 ||  url.indexOf('spotify:') >= 0){
+			if (url.indexOf('user') < 0 || url.indexOf('playlist') < 0){
+				message('Playlist not found', 'Spotify for now can only download playlists.');
+				return false;
+			}
+		}
+		addToQueue(url);
+	}
+});
 
 //#############################################TAB_SEARCH#############################################\\
 $('#tab_search_form_search').submit(function (ev) {
@@ -259,6 +285,7 @@ $('#tab_search_form_search').submit(function (ev) {
 	var mode = $('#tab_search_form_search').find('input[name=searchMode]:checked').val();
 
 	if (searchString.length == 0) {
+		message('Search can\'t be empty', 'You tried to search for nothing. But if you search nothing, you\'ll find nothing. So don\'t try it again.');
 		return;
 	}
 
@@ -270,10 +297,6 @@ $('#tab_search_form_search').submit(function (ev) {
 	socket.emit("search", {type: mode, text: searchString});
 
 });
-
-$('input[name=searchMode][type=radio]').change(()=>{
-	$('#tab_search_form_search').submit();
-})
 
 socket.on('search', function (data) {
 
@@ -304,15 +327,15 @@ function showResults_table_track(tracks) {
 		var currentResultTrack = tracks[i];
 		$(tableBody).append(
 			'<tr>' +
-			'<td><a href="#" class="circle single-cover" preview="'+currentResultTrack['preview']+'"><i class="material-icons preview_controls white-text">play_arrow</i><img style="width:56px" class="circle" src="' + (currentResultTrack['album']['cover_small'] ? currentResultTrack['album']['cover_small'] : "img/noCover.jpg" ) + '"/></a></td>' +
-			'<td class="centrado"><p>' + 
-			(currentResultTrack.explicit_lyrics ? ' <i class="material-icons valignicon tiny materialize-red-text">error_outline</i>' : '')+
-			currentResultTrack['title'] + '</p>' +
-			'<p>' + currentResultTrack['artist']['name'] + '</p>' +
-			'<p>' + currentResultTrack['album']['title'] + '</p>' +
-			'<p>' + convertDuration(currentResultTrack['duration']) + '</p></td>' +
+			'<td><a href="#" class="circle single-cover" preview="'+currentResultTrack['preview']+'"><i class="material-icons preview_controls white-text">play_arrow</i><img class="circle" src="' + currentResultTrack['album']['cover_small'] + '"/></a></td>' +
+			'<td><section class="centrado">' + currentResultTrack['title'] + (currentResultTrack.explicit_lyrics ? ' <i class="material-icons valignicon tiny materialize-red-text">error_outline</i>' : '')+ '</br>' +
+			'' + currentResultTrack['artist']['name'] + '</br>' +
+			'' + currentResultTrack['album']['title'] + '</br>' +
+			'' + convertDuration(currentResultTrack['duration']) + '</br>' +
+			'</section>'+
+			'<td></td>'+
 			'</tr>');
-		generateDownloadLink(currentResultTrack['link']).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight">');
+		generateDownloadLink(currentResultTrack['link']).appendTo(tableBody.children('tr:last').children('td:last')).wrap('<td class="toRight>');
 
 		tableBody.children('tr:last').find('.preview_controls').hover( function () {
 			$(this).css({opacity: 1});
@@ -339,7 +362,6 @@ function showResults_table_track(tracks) {
 				$("*").removeProp("playing");
 				$(this).prop("playing","playing");
 				$('.preview_controls').text("play_arrow");
-				$('.preview_playlist_controls').text("play_arrow");
 				$('.preview_controls').css({opacity:0});
 				$(this).children('i').text("pause");
 				$(this).children('i').css({opacity: 1});
@@ -362,17 +384,18 @@ function showResults_table_album(albums) {
 		var currentResultAlbum = albums[i];
 		$(tableBody).append(
 				'<tr>' +
-				'<td><img style="width:56px" src="' + (currentResultAlbum['cover_small'] ? currentResultAlbum['cover_small'] : "img/noCover.jpg") + '" class="circle" /></td>' +
-				'<td class="centrado"><p>' +
+				'<td><img src="' + currentResultAlbum['cover_small'] + '" class="circle" /></td>' +
+				'<td><section class="centrado">'+
 				(currentResultAlbum.explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i> ' : '') + 
-				currentResultAlbum['title'] + '</p>' +
-				'<p>' + currentResultAlbum['artist']['name'] + '</p>' +
-				'<p>' + currentResultAlbum['nb_tracks'] + ' song' + (currentResultAlbum['nb_tracks']>1? 's':'') + '</p>' +
-				'<p>' + 'type: ' + currentResultAlbum['record_type'] + '</p></td>' +
+				'' + currentResultAlbum['title'] + '</br>' +
+				'' + currentResultAlbum['artist']['name'] + '</br>' +
+				'' + currentResultAlbum['nb_tracks'] + '</br>' +
+				'' + currentResultAlbum['record_type'] + '</td>' +
+				'</section>' +
 				'<td class="toRight"></td>' +
 				'</tr>');
-		generateShowTracklistSelectiveButton(currentResultAlbum['link']).appendTo(tableBody.children().children('td:last')).wrap('<p>');
-		generateDownloadLink(currentResultAlbum['link']).appendTo(tableBody.children().children('td:last')).wrap('<p>');
+		tableBody.children().children('td:last').append(generateShowTracklistSelectiveButton(currentResultAlbum['link']));
+		tableBody.children().children('td:last').append(generateDownloadLink(currentResultAlbum['link']));
 	}
 	$('.tooltipped').tooltip({delay: 100});
 }
@@ -385,13 +408,13 @@ function showResults_table_artist(artists) {
 		var currentResultArtist = artists[i];
 		$(tableBody).append(
 				'<tr>' +
-				'<td><img style="width:56px" src="' + (currentResultArtist['picture_small'] ? currentResultArtist['picture_small'] : "img/noCover.jpg")  + '" class="circle" /></td>' +
-				'<td class="centrado"><p>' + currentResultArtist['name'] + '</p>' +
-				'<p>' + currentResultArtist['nb_album'] + ' album' + (currentResultArtist['nb_album']>1?'s':'') + '</p></td>' +
-				'<td class="toRight"></td>' +
+				'<td><img src="' + currentResultArtist['picture_small'] + '" class="circle" /></td>' +
+				'<td><section class="centrado detallesArtist">' + currentResultArtist['name'] + '</br>' +
+				'' + currentResultArtist['nb_album'] + " album" + (currentResultArtist['nb_album']!==1? "s":"") + '</td>' +
+				'</section>'+
 				'</tr>');
-		generateShowTracklistButton(currentResultArtist['link']).appendTo(tableBody.children().children('td:last')).wrap('<p>');
-		generateDownloadLink(currentResultArtist['link']).appendTo(tableBody.children().children('td:last')).wrap('<p>');
+		generateShowTracklistButton(currentResultArtist['link']).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight">');
+		//generateDownloadLink(currentResultArtist['link']).appendTo(tableBody.children('tr:last')).wrap('<td>');
 	}
 }
 
@@ -403,14 +426,14 @@ function showResults_table_playlist(playlists) {
 		var currentResultPlaylist = playlists[i];
 		$(tableBody).append(
 				'<tr>' +
-				'<td><img style="width:56px" src="' +  
-				(currentResultPlaylist['picture_small'] ? currentResultPlaylist['picture_small'] : "img/noCover.jpg") + 
-				'" class="circle" /></td>' +
-				'<td class="centrado"><p>' + currentResultPlaylist['title'] + '</p>' +
-				'<p>' + currentResultPlaylist['nb_tracks'] + ' songs' + '</p></td>' +
+				'<td><img src="' + currentResultPlaylist['picture_small'] + '" class="circle" /></td>' +
+				'<td><section class="centrado">' + currentResultPlaylist['title'] + '</br>' +
+				'' + currentResultPlaylist['nb_tracks'] + ' song' + (currentResultPlaylist['nb_tracks']>1?"s":"") + '</td>' +
+				'</section>' +
+				'<td class="toRight"></td>' +
 				'</tr>');
-		generateShowTracklistSelectiveButton(currentResultPlaylist['link']).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight">');
-		generateDownloadLink(currentResultPlaylist['link']).appendTo(tableBody.children().children('td:last')).wrap('<p>');
+		tableBody.children().children('td:last').append(generateShowTracklistSelectiveButton(currentResultPlaylist['link']));
+		tableBody.children().children('td:last').append(generateDownloadLink(currentResultPlaylist['link']));
 	}
 	$('.tooltipped').tooltip({delay: 100});
 }
@@ -514,25 +537,18 @@ socket.on("getTrackList", function (data) {
 				{title: 'Release Date'},
 				{title: 'Record Type'},
 				{title: 'Download Album'}*/
-				{title: ''},
-				{title: ''},
-				{title: ''},
-				{title: ''}
 			];
 
 			for (var i = 0; i < trackList.length; i++) {
-				$(tableBody).append(
-				'<tr><td>' + 
-				(i + 1) + '</td>' +
-				'<td><a href="#" class="album_chip" data-link="' + trackList[i].link + '"><div class="chip"><img src="' +
-				trackList[i].cover_small + '" /></div></a></td>' +
-				'<td class="centrado"><p>' + 
-				(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i>' : '') + 
-				trackList[i].title + '</p>' + 
-				'<p>' + trackList[i].release_date + '</p>'+
-				'<p>' + trackList[i].record_type + '</p></td>'+
-				'</tr>');
-				generateDownloadLink(trackList[i].link).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight">');
+
+				$(tableBody).append('<tr><td>' + (i + 1) + '</td>' +
+						'<td class="centrado">'+
+						(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i></br>' : '') +
+						'<a href="#" class="album_chip" data-link="' + trackList[i].link + '"><div class="chip"><img src="' + trackList[i].cover_small + '" />' + trackList[i].title + '</div></a></br>' +
+						'' + trackList[i].release_date + '</br>' + 
+						trackList[i].record_type + '</td></tr>');
+
+				generateDownloadLink(trackList[i].link).appendTo(tableBody.children('tr:last')).wrap('<td>');
 			}
 			$('.album_chip').click(function(e){
 				showTrackListSelective($(this).data('link'), true);
@@ -541,72 +557,33 @@ socket.on("getTrackList", function (data) {
 			trackListSelectiveModalApp.title = 'Playlist';
 
 			trackListSelectiveModalApp.head = [
-				/*{title: '<i class="material-icons">music_note</i>'},
-				{title: '#'},
+				/*{title: '#'},
 				{title: 'Song'},
 				{title: 'Artist'},
 				{title: '<i class="material-icons">timer</i>'},*/
-				{title: '<i class="material-icons">music_note</i>'},
-				{title: ''},
-				{title: ''},
-				{title: '<div class="valign-wrapper checkBoxAllSongs">Select all<label><input class="selectAll" type="checkbox" id="selectAll"><span></span></label></div>'}
+				{title: '<div class="valign-wrapper"><label><input class="selectAll" type="checkbox" id="selectAll"><span>Select all songs</span></label></div>'}
 			];
 
 			$('.selectAll').prop('checked', false);
 
 			for (var i = 0; i < trackList.length; i++) {
-				$(tableBody).append(
-					'<tr><td><i class="material-icons preview_playlist_controls" preview="'+trackList[i].preview+'">play_arrow</i></td>'+
-					'<td>' + (i + 1) + '</td>' +
-					'<td class="centrado"><p>'+
-					(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i> ' : '') + trackList[i].title + '</p>' +
-					'<p>' + trackList[i].artist.name + '</p>' +
-					'<p>' + convertDuration(trackList[i].duration) + '</p></td>' +
-					'<td><div class="valign-wrapper"><label><input class="trackCheckbox valign" type="checkbox" id="trackChk'+ i +'" value="' + trackList[i].link + '"><span></span></label></div></tr>'
-				);
-				tableBody.children('tr:last').find('.preview_playlist_controls').click(function (e) {
-					e.preventDefault();
-					if ($(this).prop("playing")){
-						if (preview_track.paused){
-							preview_track.play();
-							preview_stopped = false;
-							$(this).text("pause");
-							$(preview_track).animate({volume: 1}, 500);
-						}else{
-							preview_stopped = true;
-							$(this).text("play_arrow");
-							$(preview_track).animate({volume: 0}, 250, "swing", ()=>{ preview_track.pause() });
-						}
-					}else{
-						$("*").removeProp("playing");
-						$(this).prop("playing","playing");
-						$('.preview_controls').text("play_arrow");
-						$('.preview_playlist_controls').text("play_arrow");
-						$('.preview_controls').css({opacity:0});
-						$(this).text("pause");
-						$(this).css({opacity: 1});
-						preview_stopped = false;
-						$(preview_track).animate({volume: 0}, 250, "swing", ()=>{
-							preview_track.pause();
-							$('#preview-track_source').prop("src", $(this).attr("preview"));
-							preview_track.load();
-						});
-					}
-				});
+				$(tableBody).append('<tr><td class="playNum">' + (i + 1) + '</td>' +
+						'<td class="centrado">' + 
+						(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i> ' : '') + 
+						trackList[i].title + '</br>' +
+						'' + trackList[i].artist.name + '</br>' +
+						'' + convertDuration(trackList[i].duration) + '</td>' +
+						'<td><div class="valign-wrapper"><label><input class="trackCheckbox valign" type="checkbox" id="trackChk'+ i +'" value="' + trackList[i].link + '"><span></span></label></div></td></tr>');
 			}
 		} else if(data.reqType == 'album') {
 			trackListSelectiveModalApp.title = 'Tracklist';
 
 			trackListSelectiveModalApp.head = [
-				/*{title: '<i class="material-icons">music_note</i>'},
-				{title: '#'},
+				/*{title: ''},
 				{title: 'Song'},
 				{title: 'Artist'},
 				{title: '<i class="material-icons">timer</i>'},*/
-				{title: '<i class="material-icons">music_note</i>'},
-				{title: ''},
-				{title: ''},
-				{title: '<div class="valign-wrapper checkBoxAllSongs">Select all<label><input class="selectAll" type="checkbox" id="selectAll"><span></span></label></div>'}
+				{title: '<div class="valign-wrapper"><label><input class="selectAll" type="checkbox" id="selectAll"><span>Select all songs</span></label></div>'}
 			];
 
 			$('.selectAll').prop('checked', false);
@@ -623,50 +600,17 @@ socket.on("getTrackList", function (data) {
 					$(tableBody).append('<tr><td colspan="4" style="opacity: 0.54;"><i class="material-icons valignicon tiny">album</i> '+discNum+'</td></tr>');
 					baseDisc = discNum;
 				}
-				$(tableBody).append(
-					'<tr><td><i class="material-icons preview_playlist_controls" preview="'+trackList[i].preview+'">play_arrow</i></td>'+
-					'<td>' + trackList[i].track_position + '</td>' +
-					'<td class="centrado"><p>' +
-					(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i> ' : '') + 
-					trackList[i].title + '</p>' +
-					'<p>' + trackList[i].artist.name + '</p>' +
-					'<p>' + convertDuration(trackList[i].duration) + '</p></td>' +
-					'<td><div class="valign-wrapper "><label><input class="trackCheckbox valign" type="checkbox" id="trackChk'+ i +'" value="' + trackList[i].link + '"><span></span></label></div></tr>'
-				);
-				tableBody.children('tr:last').find('.preview_playlist_controls').click(function (e) {
-					e.preventDefault();
-					if ($(this).prop("playing")){
-						if (preview_track.paused){
-							preview_track.play();
-							preview_stopped = false;
-							$(this).text("pause");
-							$(preview_track).animate({volume: 1}, 500);
-						}else{
-							preview_stopped = true;
-							$(this).text("play_arrow");
-							$(preview_track).animate({volume: 0}, 250, "swing", ()=>{ preview_track.pause() });
-						}
-					}else{
-						$("*").removeProp("playing");
-						$(this).prop("playing","playing");
-						$('.preview_controls').text("play_arrow");
-						$('.preview_playlist_controls').text("play_arrow");
-						$('.preview_controls').css({opacity:0});
-						$(this).text("pause");
-						$(this).css({opacity: 1});
-						preview_stopped = false;
-						$(preview_track).animate({volume: 0}, 250, "swing", ()=>{
-							preview_track.pause();
-							$('#preview-track_source').prop("src", $(this).attr("preview"));
-							preview_track.load();
-						});
-					}
-				});
+				$(tableBody).append('<tr><td>' + trackList[i].track_position + '</td>' +
+						'<td class="centrado">' + 
+						(trackList[i].explicit_lyrics ? '<i class="material-icons valignicon tiny materialize-red-text tooltipped" data-tooltip="Explicit">error_outline</i> ' : '') + 
+						trackList[i].title + '</br>' +
+						'' + trackList[i].artist.name + '</br>' +
+						'' + convertDuration(trackList[i].duration) + '</br>' +
+						'<td><div class="valign-wrapper"><label><input class="trackCheckbox valign" type="checkbox" id="trackChk'+ i +'" value="' + trackList[i].link + '"><span></span></label></div></tr>');
 			}
 		} else {
 			trackListModalApp.title = 'Tracklist';
 			trackListModalApp.head = [
-				{title: '<i class="material-icons">music_note</i>'},
 				{title: '#'},
 				{title: 'Song'},
 				{title: 'Artist'},
@@ -712,12 +656,6 @@ socket.on("getChartsCountryList", function (data) {
 	$('select').formSelect();
 });
 
-socket.on("setChartsCountry", function (data) {
-	$('#tab_charts_select_country').find('option[value="' + data.selected + '"]').attr("selected", true);
-	$('#modal_settings_select_chartsCounrty').find('option[value="' + data.selected + '"]').attr("selected", true);
-	$('select').formSelect();
-});
-
 $('#tab_charts_select_country').on('change', function () {
 
 	var country = $(this).find('option:selected').val();
@@ -737,25 +675,22 @@ socket.on("getChartsTrackListByCountry", function (data) {
 	var chartsTableBody = $('#tab_charts_table_charts_tbody_charts'), currentChartTrack;
 
 	chartsTableBody.html('');
-
+	
 	for (var i = 0; i < data.tracks.length; i++) {
-
 		currentChartTrack = data.tracks[i];
-		if(i%2==0)
-		$(chartsTableBody).append("<div class='row'>");
+		var s1="", s2="";
+		if(i%2==0)$(chartsTableBody).append("<div class='row'>");
 		$(chartsTableBody).append(
 				'<tr class="col s6">' +
-				'<td class="centrado chartSong"><p><a href="#" class="circle single-cover" preview="'+currentChartTrack['preview']+'"><i class="material-icons preview_controls white-text">play_arrow</i><img style="width:56px" src="' + (currentChartTrack['album']['cover_small'] ? currentChartTrack['album']['cover_small'] : "img/noCover.jpg") + '" class="circle" /></a></p>' +
-				'<p>' + 'No.: ' + (i + 1) + '</p>' +
+				'<td class="centrado chartSong"><p><a href="#" class="circle single-cover" preview="'+currentChartTrack['preview']+'"><i class="material-icons preview_controls white-text">play_arrow</i><img src="' + currentChartTrack['album']['cover_small'] + '" class="circle" /></a></p>' +
+				'<p>' + (i + 1) + '</p>' +
 				'<p>' + currentChartTrack['title'] + '</p>' +
 				'<p>' + currentChartTrack['artist']['name'] + '</p>' +
 				'<p>' + currentChartTrack['album']['title'] + '</p>' +
-				'<p>' + convertDuration(currentChartTrack['duration']) + '</p></td>' +
-				'</tr>');
+				'<p>' + convertDuration(currentChartTrack['duration']) + '</p></td>'+
+				'</tr>'+s2);
 		generateDownloadLink(currentChartTrack['link']).appendTo(chartsTableBody.children().children('td:last')).wrap('<p>');
-		if(i%2==1)
-		$(chartsTableBody).append("</div>");
-
+		if(i%2==1)$(chartsTableBody).append("</div>");
 		chartsTableBody.children('tr:last').find('.preview_controls').hover( function () {
 			$(this).css({opacity: 1});
 		}, function () {
@@ -781,7 +716,6 @@ socket.on("getChartsTrackListByCountry", function (data) {
 				$("*").removeProp("playing");
 				$(this).prop("playing","playing");
 				$('.preview_controls').text("play_arrow");
-				$('.preview_playlist_controls').text("play_arrow");
 				$('.preview_controls').css({opacity:0});
 				$(this).children('i').text("pause");
 				$(this).children('i').css({opacity: 1});
@@ -793,6 +727,7 @@ socket.on("getChartsTrackListByCountry", function (data) {
 				});
 			}
 		});
+		if(i%2==1)$(chartsTableBody).append("</div>");
 
 	}
 
@@ -801,57 +736,26 @@ socket.on("getChartsTrackListByCountry", function (data) {
 
 });
 
-//#############################################TAB_PLAYLISTS############################################\\
+//############################################
 socket.on("getMePlaylistList", function (data) {
+	$("#table_personal_playlists_loadingIndicator").css("visibility", "collapse");
 	var tableBody = $('#table_personal_playlists');
+	tableBody.css("visibility", "visible");
 	$(tableBody).html('');
 	for (var i = 0; i < data.playlists.length; i++) {
 		var currentResultPlaylist = data.playlists[i];
 		$(tableBody).append(
 				'<tr>' +
 				'<td><img src="' + currentResultPlaylist['image'] + '" class="circle" width="56px" /></td>' +
-				'<td>' + currentResultPlaylist['title'] + '</td>' +
-				'<td>' + currentResultPlaylist['songs'] + '</td>' +
+				'<td><section class="centrado">' + currentResultPlaylist['title'] + '</br>' +
+				'' + currentResultPlaylist['songs'] + '</td>' +
+				'</section>'+
+				'<td class="toRight"></td>'+
 				'</tr>');
-		generateShowTracklistSelectiveButton(currentResultPlaylist['link']).appendTo(tableBody.children('tr:last')).wrap('<td>');
-		generateDownloadLink(currentResultPlaylist['link']).appendTo(tableBody.children('tr:last')).wrap('<td>');
+		generateShowTracklistSelectiveButton(currentResultPlaylist['link']).appendTo(tableBody.children('tr:last').children('td:last')).wrap('<p>');
+		generateDownloadLink(currentResultPlaylist['link']).appendTo(tableBody.children('tr:last').children('td:last')).wrap('<p>');
 	}
 	$('.tooltipped').tooltip({delay: 100});
-});
-
-//###############################################TAB_URL##############################################\\
-$('#tab_url_form_url').submit(function (ev) {
-
-	ev.preventDefault();
-	var urls = $("#song_url").val().split(";");
-	console.log(urls);
-	for(var i = 0; i < urls.length; i++){
-		var url = urls[i];
-		console.log(url);
-
-		if (url.length == 0) {
-			message('Blank URL Field', 'You need to insert an URL to download it!');
-			return false;
-		}
-
-		//Validate URL
-		if (url.indexOf('deezer.com/') < 0 && url.indexOf('open.spotify.com/') < 0 && url.indexOf('spotify:') < 0) {
-			message('Wrong URL', 'The URL seems to be wrong. Please check it and try it again.');
-			return false;
-		}
-
-		if (url.indexOf('?') > -1) {
-			url = url.substring(0, url.indexOf("?"));
-		}
-
-		if (url.indexOf('open.spotify.com/') >= 0 ||  url.indexOf('spotify:') >= 0){
-			if (url.indexOf('user') < 0 || url.indexOf('playlist') < 0){
-				message('Playlist not found', 'Spotify for now can only download playlists.');
-				return false;
-			}
-		}
-		addToQueue(url);
-	}
 });
 
 //############################################TAB_DOWNLOADS###########################################\\
@@ -860,7 +764,7 @@ function addToQueue(url) {
 
 	if (type == 'spotifyplaylist'){
 		[user, id] = getPlayUserFromURI(url)
-		userSettings.currentSpotifyUser = user;
+		userSettings.spotifyUser = user;
 	}
 
 	if (type == 'track') {
@@ -878,7 +782,7 @@ function addToQueue(url) {
 	}
 
 	if (alreadyInQueue(id)) {
-		M.toast({html: '<i class="material-icons left">playlist_add_check</i> Already in download-queue!', displayLength: 5000, classes: 'rounded'});
+		M.toast({html: '<i class="material-icons">playlist_add_check</i>Already in download-queue!', displayLength: 5000, classes: 'rounded'});
 
 		return false;
 	}
@@ -889,7 +793,7 @@ function addToQueue(url) {
 	}
 	socket.emit("download" + type, {id: id, settings: userSettings});
 
-	M.toast({html: '<i class="material-icons left">add</i>Added to download-queue', displayLength: 5000, classes: 'rounded'});
+	M.toast({html: '<i class="material-icons">add</i>Added to download-queue', displayLength: 5000, classes: 'rounded'});
 
 }
 
@@ -959,35 +863,33 @@ socket.on('updateQueue', function (data) {
 	if (data.failed == 0 && ((data.downloaded + data.failed) >= data.size)) {
 		$('#' + data.queueId).find('.eventBtn').html('<i class="material-icons">done</i>');
 		$('#' + data.queueId).addClass('finished');
-		M.toast({html: `<i class="material-icons left">done</i>${quoteattr(data.name)} - Completed!`, displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">done</i>One download completed!', displayLength: 5000, classes: 'rounded'})
 	} else if (data.downloaded == 0 && ((data.downloaded + data.failed) >= data.size)) {
 		$('#' + data.queueId).find('.eventBtn').html('<i class="material-icons">error</i>');
 		$('#' + data.queueId).addClass('error');
-		M.toast({html: `<i class="material-icons left">error</i>${quoteattr(data.name)} - Failed!`, displayLength: 5000, classes: 'rounded'})
-	} else if ((data.downloaded + data.failed) >= data.size) {
-		$('#' + data.queueId).find('.eventBtn').html('<i class="material-icons">warning</i>');
-		$('#' + data.queueId).addClass('error');
-		M.toast({html: `<i class="material-icons left">warning</i>${quoteattr(data.name)} - Completed with errors!`, displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">error</i>One download failed!', displayLength: 5000, classes: 'rounded'})
 	}
+
 });
 
 socket.on("downloadProgress", function (data) {
 	//data.queueId -> id (string)
 	//data.percentage -> float/double, percentage
 	//updated in 1% steps
+
 	$('#' + data.queueId).find('.determinate').css('width', data.percentage + '%');
 
 });
 
 socket.on("emptyDownloadQueue", function () {
-	M.toast({html: '<i class="material-icons left">done_all</i>All downloads completed!', displayLength: 5000, classes: 'rounded'});
+	M.toast({html: '<i class="material-icons">done_all</i>All downloads completed!', displayLength: 5000, classes: 'rounded'});
 });
 
 socket.on("cancelDownload", function (data) {
 	//data.queueId		-> queueId of item which was canceled
 	$('#' + data.queueId).addClass('animated fadeOutRight').on('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
 		$(this).remove();
-		M.toast({html: '<i class="material-icons left">clear</i>One download removed!', displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">clear</i>One download removed!', displayLength: 5000, classes: 'rounded'})
 	});
 });
 
@@ -1001,29 +903,7 @@ $('#clearTracksTable').click(function (ev) {
 //****************************************************************************************************\\
 //******************************************HELPER-FUNCTIONS******************************************\\
 //****************************************************************************************************\\
-/**
- * Replaces special characters with HTML friendly counterparts
- * @param s string
- * @param preserveCR preserves the new line character
- * @returns {string}
- */
-function quoteattr(s, preserveCR) {
-  preserveCR = preserveCR ? '&#13;' : '\n';
-  return ('' + s) /* Forces the conversion to string. */
-  	.replace(/&/g, '&amp;') /* This MUST be the 1st replacement. */
-    .replace(/'/g, '&apos;') /* The 4 other predefined entities, required. */
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    /*
-    You may add other replacements here for HTML only
-    (but it's not necessary).
-    Or for XML, only if the named entities are defined in its DTD.
-    */
-    .replace(/\r\n/g, preserveCR) /* Must be before the next replacement. */
-    .replace(/[\r\n]/g, preserveCR);
-    ;
-}
+
 /**
  * Given a spotify playlist URL or URI it returns the username of the owner of the playlist and the ID of the playlist
  * @param url URL or URI
@@ -1091,13 +971,4 @@ function convertDuration(duration) {
 		ss = "0" + ss;
 	}
 	return mm + ":" + ss;
-}
-
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
 }

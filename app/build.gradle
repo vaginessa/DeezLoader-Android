@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 33
-        versionName "2.0.8"
+        versionName "2.0.9"
         archivesBaseName = "DeezLoader-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {

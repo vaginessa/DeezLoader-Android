@@ -25,18 +25,19 @@ const version = (typeof packageFile === 'undefined') ? $("#appVersionFallback").
 
 	// Open DevTools when F12 is pressed
 	// Reload page when F5 is pressed
-	if (typeof require !== "undefined"){
-		if (remote.process.env.NODE_ENV == 'development'){
-			document.addEventListener("keydown", function (e) {
-				if (e.which === 123) {
-					remote.getCurrentWindow().toggleDevTools();
-				}
-				if (e.which === 116) {
-					remote.getCurrentWindow().reload();
-				}
-			});
+	document.addEventListener("keydown", function (e) {
+		if (e.which === 123) {
+			if(typeof require !== "undefined"){
+				remote.getCurrentWindow().toggleDevTools();
+			}
 		}
-	}
+
+		if (e.which === 116) {
+			if(typeof require !== "undefined"){
+				remote.getCurrentWindow().reload();
+			}
+		}
+	});
 
 	// Function to make title-bar work
 	function initTitleBar() {
@@ -63,7 +64,6 @@ const version = (typeof packageFile === 'undefined') ? $("#appVersionFallback").
 			$mainEl.css('display','none');
 			$('nav').css('top','0');
 			$('nav').css('margin-top','0');
-			$('#main_icon').css('margin-top','0');
 		}
 		$mainEl.find('#application_version').text(version);
 	}
