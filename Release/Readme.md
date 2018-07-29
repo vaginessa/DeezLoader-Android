@@ -6,14 +6,17 @@
 
 ### Option 1: arm (This should work in most of the devices, size of 15mb / Esta versión debe funcionar en la mayoría de dispositivos)
 [DeezLoader-2.0.9-armeabi-v7a.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.9-armeabi-v7a-debug.apk)
+
 [DeezLoader-2.0.8-armeabi-v7a.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-armeabi-v7a-debug.apk)
 
 ### Option 2: x86 (In case the arm doesn't work for you, size of 15mb / Por si la versión arm no te sirvió)
 [DeezLoader-2.0.9-x86.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.9-x86-debug.apk)
+
 [DeezLoader-2.0.8-x86.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-x86-debug.apk)
 
 ### Option 3: General (This should work on all devices, but size of 38mb / Esta versión debería funcionar en todos los dispositivos)
 [DeezLoader-2.0.9-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.9-General-debug.apk)
+
 [DeezLoader-2.0.8-General.apk](https://gitlab.com/DT3264/DeezLoader-Android/raw/master/Release/DeezLoader-2.0.8-General-debug.apk)
 
 # Changelog
