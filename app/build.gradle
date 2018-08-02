@@ -3,14 +3,12 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     buildToolsVersion '28.0.1'
-    //boolean to easily change from build general to individual processor apk
-    def isGeneralApk = false
     defaultConfig {
         applicationId "com.dt3264.deezloader"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 33
-        versionName "2.0.9"
+        versionCode 210
+        versionName "2.1.0"
         archivesBaseName = "DeezLoader-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -19,19 +17,14 @@ android {
                 arguments "-DANDROID_STL=c++_shared"
             }
         }
-        if (isGeneralApk) {
-            ndk {
-                abiFilters "armeabi-v7a", "x86"
-            }
-        }
     }
     splits {
         abi {
             enable true
             reset()
             //include works separately of ndk{} and universalApk
-            if (!isGeneralApk) include "armeabi-v7a", "x86"
-            if (isGeneralApk) universalApk true
+            include "armeabi-v7a", "x86"
+            universalApk true
         }
     }
     buildTypes {
