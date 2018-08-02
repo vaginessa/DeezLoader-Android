@@ -1,15 +1,6 @@
 /*
- *  _____                    _                    _
- * |  __ \                  | |                  | |
- * | |  | |  ___   ___  ____| |  ___    __ _   __| |  ___  _ __
- * | |  | | / _ \ / _ \|_  /| | / _ \  / _` | / _` | / _ \| '__|
- * | |__| ||  __/|  __/ / / | || (_) || (_| || (_| ||  __/| |
- * |_____/  \___| \___|/___||_| \___/  \__,_| \__,_| \___||_|
- *
- *
- *
- *  Original work by ZzMTV <https://boerse.to/members/zzmtv.3378614/>
- * */
+ * Original work by ZzMTV <https://boerse.to/members/zzmtv.3378614/>
+ */
 
 const express = require('express');
 const app = express();
@@ -28,25 +19,12 @@ const logger = require('./logger.js');
 const Spotify = require('spotify-web-api-node');
 const authCredentials = require('./authCredentials.js')
 
-//This is used to work with the listener html at the begining of the app
+//This is used to work with the listener html at the beginning of the app
 app.use("/favicon.ico", express.static(__dirname + '/favicon.ico'));
 
 // Load Config File
-var userdata = "";
-var homedata = "";
-if(process.env.APPDATA){
-	homedata = os.homedir();
-	userdata = process.env.APPDATA + path.sep + "Deezloader Remix\\";
-}else if(process.platform == "darwin"){
-	homedata = os.homedir();
-	userdata = homedata + '/Library/Application Support/Deezloader Remix/';
-}else if(process.platform == "android"){
-	homedata = "/storage/emulated/0";//homedata has to be through /storage/... cuz' the other way it tries at /data/storage/.. which isn't valid
-    	userdata = homedata + "/Deezloader/";
-}else{
-	homedata = os.homedir();
-	userdata = homedata + '/.config/Deezloader Remix/';
-}
+homedata = "/storage/emulated/0";
+userdata = homedata + "/Deezloader/";
 
 if(!fs.existsSync(userdata+"config.json")){
 	fs.outputFileSync(userdata+"config.json",fs.readFileSync(__dirname+path.sep+"default.json",'utf8'));
@@ -71,7 +49,8 @@ if( typeof configFile.userDefined.numplaylistbyalbum != "boolean" ||
 // Main Constants
 const configFileLocation = userdata+"config.json";
 const autologinLocation = userdata+"autologin";
-const coverArtFolder = homedata + path.sep + 'deezloader-imgs' + path.sep;
+const coverArtFolder = homedata + path.sep + 'Deezloader' + path.sep + 'Images' + path.sep;
+const coverArtNoMedia = coverArtFolder + path.sep + '.nomedia';
 const defaultDownloadDir = homedata + path.sep + "Music" + path.sep + 'Deezloader' + path.sep;
 const defaultSettings = require('./default.json').userDefined;
 
@@ -311,7 +290,6 @@ io.sockets.on('connection', function (socket) {
 					}
 					if (downloading && socket.downloadQueue[0] && socket.downloadQueue[0].queueId == downloading.queueId) socket.downloadQueue.shift();
 					socket.currentItem = null;
-					//fs.rmdirSync(coverArtDir);
 					queueDownload(getNextDownload());
 				});
 			});
@@ -375,7 +353,6 @@ io.sockets.on('connection', function (socket) {
 								}
 								if (downloading && socket.downloadQueue[0] && socket.downloadQueue[0].queueId == downloading.queueId) socket.downloadQueue.shift();
 								socket.currentItem = null;
-								//fs.rmdirSync(coverArtDir);
 								queueDownload(getNextDownload());
 							});
 						}).catch((err)=>{
@@ -1387,8 +1364,6 @@ io.sockets.on('connection', function (socket) {
 
 /**
  * Updates individual parameters in the settings file
- * @param config
- * @param value
  */
 function updateSettingsFile(config, value) {
 	configFile.userDefined[config] = value;
@@ -1396,9 +1371,6 @@ function updateSettingsFile(config, value) {
 	fs.outputFile(configFileLocation, JSON.stringify(configFile, null, 2), function (err) {
 		if (err) return;
 		logger.logs('Info',"Settings updated");
-
-		// FIXME: Endless Loop, due to call from initFolders()...crashes soon after startup
-		// initFolders();
 	});
 }
 
@@ -1426,15 +1398,12 @@ function initFolders() {
 		mainFolder = defaultDownloadDir;
 		updateSettingsFile('downloadLocation', defaultDownloadDir);
 	}
-	//fs.removeSync(coverArtFolder);
 	fs.ensureDirSync(coverArtFolder);
+	fs.ensureFileSync(coverArtNoMedia);
 }
 
 /**
  * Creates the name of the tracks replacing wildcards to correct metadata
- * @param metadata
- * @param filename
- * @param playlist
  * @returns {XML|string|*}
  */
 function settingsRegex(metadata, filename, playlist) {
@@ -1456,8 +1425,6 @@ function settingsRegex(metadata, filename, playlist) {
 
 /**
  * Creates the name of the albums folder replacing wildcards to correct metadata
- * @param metadata
- * @param foldername
  * @returns {XML|string|*}
  */
 function settingsRegexAlbum(metadata, foldername, artist, album) {
@@ -1470,8 +1437,6 @@ function settingsRegexAlbum(metadata, foldername, artist, album) {
 
 /**
  * I really don't understand what this does ... but it does something
- * @param str
- * @param max
  * @returns {String|string|*}
  */
 function pad(str, max) {
@@ -1482,7 +1447,6 @@ function pad(str, max) {
 
 /**
  * Splits the %number%
- * @param string str
  * @return string
  */
 function splitNumber(str,total){

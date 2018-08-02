@@ -223,7 +223,6 @@ function fillSettingsModal(settings) {
 	M.updateTextFields()
 }
 
-
 //#############################################MODAL_MSG##############################################\\
 function message(title, message) {
 
@@ -234,10 +233,6 @@ function message(title, message) {
 	$('#modal_msg').modal('open');
 
 }
-
-//****************************************************************************************************\\
-//************************************************TABS************************************************\\
-//****************************************************************************************************\\
 
 //###############################################TAB_URL##############################################\\
 $('#tab_url_form_url').submit(function (ev) {
@@ -413,7 +408,6 @@ function showResults_table_artist(artists) {
 				'</section>'+
 				'</tr>');
 		generateShowTracklistButton(currentResultArtist['link']).appendTo(tableBody.children('tr:last')).wrap('<td class="toRight">');
-		//generateDownloadLink(currentResultArtist['link']).appendTo(tableBody.children('tr:last')).wrap('<td>');
 	}
 }
 
@@ -502,9 +496,6 @@ function showTrackList(link) {
 }
 
 socket.on("getTrackList", function (data) {
-	//data.err			-> undefined/err
-	//data.id			 -> passed id
-	//data.response -> API response
 	if (data.err){
 		trackListSelectiveModalApp.title = "Can't get data"
 		return;
@@ -517,7 +508,6 @@ socket.on("getTrackList", function (data) {
 			return;
 		}
 
-		// ########################################
 		if(data.reqType == 'album' || data.reqType == 'playlist'){
 			var tableBody = $('#modal_trackListSelective_table_trackListSelective_tbody_trackListSelective');
 		} else {
@@ -525,17 +515,9 @@ socket.on("getTrackList", function (data) {
 		}
 		$(tableBody).html('');
 
-		//############################################
-
 		if (data.reqType == 'artist') {
 			trackListModalApp.title = 'Album List';
 			trackListModalApp.head = [
-				/*{title: '#'},
-				{title: ''},
-				{title: 'Album Title'},
-				{title: 'Release Date'},
-				{title: 'Record Type'},
-				{title: 'Download Album'}*/
 			];
 
 			for (var i = 0; i < trackList.length; i++) {
@@ -556,10 +538,6 @@ socket.on("getTrackList", function (data) {
 			trackListSelectiveModalApp.title = 'Playlist';
 
 			trackListSelectiveModalApp.head = [
-				/*{title: '#'},
-				{title: 'Song'},
-				{title: 'Artist'},
-				{title: '<i class="material-icons">timer</i>'},*/
 				{title: '<div class="valign-wrapper"><label><input class="selectAll" type="checkbox" id="selectAll"><span>Select all songs</span></label></div>'}
 			];
 
@@ -578,10 +556,6 @@ socket.on("getTrackList", function (data) {
 			trackListSelectiveModalApp.title = 'Tracklist';
 
 			trackListSelectiveModalApp.head = [
-				/*{title: ''},
-				{title: 'Song'},
-				{title: 'Artist'},
-				{title: '<i class="material-icons">timer</i>'},*/
 				{title: '<div class="valign-wrapper"><label><input class="selectAll" type="checkbox" id="selectAll"><span>Select all songs</span></label></div>'}
 			];
 
@@ -632,18 +606,11 @@ socket.on("getTrackList", function (data) {
 			$('#modal_trackList_table_trackList_tbody_loadingIndicator').addClass('hide');
 			$('#modal_trackList_table_trackList_tbody_trackList').removeClass('hide');
 		}
-
-		//$('#modal_trackList_table_trackList_tbody_trackList').html(content);
-
 	}
 });
 
 //#############################################TAB_CHARTS#############################################\\
 socket.on("getChartsCountryList", function (data) {
-	//data.countries		-> Array
-	//data.countries[0].country -> String (country name)
-	//data.countries[0].picture_small/picture_medium/picture_big -> url to cover
-
 	for (var i = 0; i < data.countries.length; i++) {
 		$('#tab_charts_select_country').append('<option value="' + data.countries[i]['country'] + '" data-icon="' + data.countries[i]['picture_small'] + '" class="left circle">' + data.countries[i]['country'] + '</option>');
 		$('#modal_settings_select_chartsCounrty').append('<option value="' + data.countries[i]['country'] + '" data-icon="' + data.countries[i]['picture_small'] + '" class="left circle">' + data.countries[i]['country'] + '</option>');
@@ -667,10 +634,6 @@ $('#tab_charts_select_country').on('change', function () {
 });
 
 socket.on("getChartsTrackListByCountry", function (data) {
-	//data.playlist		-> Object with Playlist information
-	//data.tracks			-> Array
-	//data.tracks[0]	 -> Object of track 0
-
 	var chartsTableBody = $('#tab_charts_table_charts_tbody_charts'), currentChartTrack;
 
 	chartsTableBody.html('');
@@ -735,7 +698,6 @@ socket.on("getChartsTrackListByCountry", function (data) {
 
 });
 
-//############################################
 socket.on("getMePlaylistList", function (data) {
 	$("#table_personal_playlists_loadingIndicator").css("visibility", "collapse");
 	var tableBody = $('#table_personal_playlists');
@@ -842,9 +804,7 @@ socket.on('addToQueue', function (data) {
 });
 
 socket.on("downloadStarted", function (data) {
-	//data.queueId -> queueId of started download
 
-	//Switch progress type indeterminate to determinate
 	$('#' + data.queueId).find('.indeterminate').removeClass('indeterminate').addClass('determinate');
 	$('#' + data.queueId).find('.eventBtn').find('a').html('<i class="material-icons">clear</i>');
 
@@ -872,11 +832,7 @@ socket.on('updateQueue', function (data) {
 });
 
 socket.on("downloadProgress", function (data) {
-	//data.queueId -> id (string)
-	//data.percentage -> float/double, percentage
-	//updated in 1% steps
 
-	//$('#' + data.queueId).find('.determinate').css('width', data.percentage + '%');
 	$('#' + data.queueId).find('.progressText').html(parseInt(data.percentage) + '%');
 
 });
@@ -886,7 +842,6 @@ socket.on("emptyDownloadQueue", function () {
 });
 
 socket.on("cancelDownload", function (data) {
-	//data.queueId		-> queueId of item which was canceled
 	$('#' + data.queueId).addClass('animated fadeOutRight').on('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
 		$(this).remove();
 		M.toast({html: '<i class="material-icons">clear</i>One download removed!', displayLength: 5000, classes: 'rounded'})
@@ -900,14 +855,8 @@ $('#clearTracksTable').click(function (ev) {
 	return false;
 });
 
-//****************************************************************************************************\\
-//******************************************HELPER-FUNCTIONS******************************************\\
-//****************************************************************************************************\\
-
 /**
  * Given a spotify playlist URL or URI it returns the username of the owner of the playlist and the ID of the playlist
- * @param url URL or URI
- * @return string[] Array containing user and playlist id
  */
 function getPlayUserFromURI(url){
 	var spotyUser, playlistID;
@@ -962,11 +911,9 @@ function generateDownloadLink(url) {
 }
 
 function convertDuration(duration) {
-	//convert from seconds only to mm:ss format
 	var mm, ss;
 	mm = Math.floor(duration / 60);
 	ss = duration - (mm * 60);
-	//add leading zero if ss < 0
 	if (ss < 10) {
 		ss = "0" + ss;
 	}

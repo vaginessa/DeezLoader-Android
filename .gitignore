@@ -18,3 +18,9 @@ app/gradlew
 app/gradle/wrapper/gradle-wrapper\.properties
 
 app/gradle/wrapper/gradle-wrapper\.jar
+
+app/src/main/gen/com/dt3264/deezloader/BuildConfig\.java
+
+app/src/main/gen/com/dt3264/deezloader/Manifest\.java
+
+app/src/main/gen/com/dt3264/deezloader/R\.java

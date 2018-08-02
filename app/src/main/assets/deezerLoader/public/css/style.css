@@ -22,66 +22,6 @@ body {
 	margin:0px;
 }
 
-#title-bar {
-	-webkit-user-select: none;
-	-webkit-app-region: drag;
-	overflow: hidden !important;
-	position: fixed;
-	width: 100%;
-	left: 0;
-	top: 0;
-	right: 0;
-	z-index: 99;
-	height: 32px;
-	line-height: 32px;
-	background-color: #3a3a3a;
-	padding: 0;
-	margin: 0;
-	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-#title-bar #title {
-	position: absolute;
-	top: 0px;
-	left: 6px;
-	color: #fff;
-}
-
-#title-bar #title-bar-btns {
-	-webkit-user-select: none;
-	-webkit-app-region: no-drag;
-	position: absolute;
-	top: 0px;
-	right: 6px;
-}
-
-#title-bar #title-bar-btns button {
-	line-height: 0px;
-	height: 32px;
-	background-color: transparent;
-	border: none;
-	color: #F1F1F1;
-	font-size: 14px;
-	padding: 0 3px;
-	-webkit-transition: 0.2s;
-	-o-transition: 0.2s;
-	transition: 0.2s;
-}
-
-#title-bar #title-bar-btns button:hover {
-	background: rgba(255, 255, 255, 0.1);
-}
-
-#title-bar #title-bar-btns {
-	right: 0px !important;
-}
-
-#title-bar #title-bar-btns i {
-	font-size: 20px;
-	padding: 0 10px;
-}
-
 nav {
 	background-image: url("../img/bg.jpg");
 	height: 256px;
@@ -89,8 +29,8 @@ nav {
 	background-size: cover;
 	overflow: auto;
 	position: relative;
-	top: -1px;
-	margin-top: 32px;
+	top: 0px;
+	margin-top: 0px;
 	padding-top: 12px;
 }
 
@@ -160,8 +100,8 @@ nav .description:after {
 }
 
 ::-webkit-scrollbar {
-	height: 4px;
-	width: 4px;
+	height: 3px;
+	width: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -175,7 +115,7 @@ nav .description:after {
 }
 
 body::-webkit-scrollbar {
-	width: 10px;
+	width: 3px;
 }
 
 body::-webkit-scrollbar-track {
