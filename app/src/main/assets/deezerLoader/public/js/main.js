@@ -29,24 +29,24 @@ socket.on("message", function(title, msg){
 
 //Login button
 $('#modal_login_btn_login').click(function () {
-	$('#modal_login_btn_login').attr("disabled", true);
+	$('#modal_login_btn_login').attr("disabled",true);
 	$('#modal_login_btn_login').html("Logging in...");
 	var username = $('#modal_login_input_username').val();
 	var password = $('#modal_login_input_password').val();
 	//Send to the software
 	Username = username;
-	socket.emit('login', username, password, true);
+	socket.emit("login",username,password,true);
 });
 
 socket.on("autologin",function(username,password){
-	$('#modal_login_input_autologin').prop('checked', true);
-	$('#modal_login_btn_login').attr("disabled", true);
+	$('#modal_login_input_autologin').prop('checked',true);
+	$('#modal_login_btn_login').attr("disabled",true);
 	$('#modal_login_btn_login').html("Logging in...");
 	$('#modal_login_input_username').val(username);
 	Username = username;
 	$('#modal_login_input_password').val(password);
 	M.updateTextFields();
-	socket.emit('login', username, password,false);
+	socket.emit('login',username,password,false);
 });
 socket.on("login", function (errmsg) {
 	if (errmsg == "none") {
@@ -56,14 +56,14 @@ socket.on("login", function (errmsg) {
 			$(this).removeClass('animated fadeOut');
 		});
 
-	// Load top charts list for countries
-	socket.emit("getChartsCountryList", {selected: userSettings.chartsCountry});
-	socket.emit("getChartsTrackListByCountry", {country: userSettings.chartsCountry});
-	socket.emit("getMePlaylistList", {});
-
+	    // Load top charts list for countries
+	    socket.emit("getChartsCountryList", {selected: userSettings.chartsCountry});
+	    socket.emit("getChartsTrackListByCountry", {country: userSettings.chartsCountry});
+	    socket.emit("getMePlaylistList", {});
 	}else{
-			$('#login-res-text').text(errmsg);
-			setTimeout(function(){$('#login-res-text').text("");},1000);
+	    fs.unlink(autologinLocation,function(){});
+	    $('#login-res-text').text(errmsg);
+		setTimeout(function(){$('#login-res-text').text("");},10000);
 	}
 	$('#modal_login_btn_login').attr("disabled", false);
 	$('#modal_login_btn_login').html("Login");

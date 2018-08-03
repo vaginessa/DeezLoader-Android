@@ -7,8 +7,8 @@ android {
         applicationId "com.dt3264.deezloader"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 210
-        versionName "2.1.0"
+        versionCode 211
+        versionName "2.1.1"
         archivesBaseName = "DeezLoader-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -82,4 +82,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     testImplementation 'junit:junit:4.12'
+}
+repositories {
+    mavenCentral()
 }

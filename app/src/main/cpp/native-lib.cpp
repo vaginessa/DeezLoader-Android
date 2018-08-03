@@ -80,7 +80,7 @@ Java_com_dt3264_deezloader_MainActivity_startNodeWithArguments(
     }
 
     //Stores arguments in contiguous memory.
-    char* args_buffer=(char*)calloc(c_arguments_size, sizeof(char));
+    char* args_buffer=(char*)calloc(static_cast<size_t>(c_arguments_size), sizeof(char));
 
     //argv to pass into node.
     char* argv[argument_count];

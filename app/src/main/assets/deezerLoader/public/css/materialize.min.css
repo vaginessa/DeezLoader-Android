@@ -1828,19 +1828,10 @@ a {
 .z-depth-0 {
 	box-shadow: none !important
 }
-.z-depth-1,
-nav,
-.card-panel,
-.card,
-.btn-floating,
-.sidenav {
+.z-depth-1 {
 	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2)
 }
-.z-depth-1-half,
-.btn:hover,
-.btn-large:hover,
-.btn-small:hover,
-.btn-floating:hover {
+.z-depth-1-half {
 	box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2)
 }
 .z-depth-2 {
@@ -1852,8 +1843,7 @@ nav,
 .z-depth-4 {
 	box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -7px rgba(0, 0, 0, 0.2)
 }
-.z-depth-5,
-.modal {
+.z-depth-5 {
 	box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2)
 }
 .hoverable {
@@ -4373,105 +4363,6 @@ body.keyboard-focused .dropdown-content li:focus {
 .dropdown-trigger {
 	cursor: pointer
 }
-/*!
- * Waves v0.6.0
- * http://fian.my.id/Waves
- *
- * Copyright 2014 Alfiana E. Sibuea and other contributors
- * Released under the MIT license
- * https://github.com/fians/Waves/blob/master/LICENSE
- */
-
-.waves-effect {
-	position: relative;
-	cursor: pointer;
-	display: inline-block;
-	overflow: hidden;
-	user-select: none;
-	-webkit-tap-highlight-color: transparent;
-	vertical-align: middle;
-	z-index: 1;
-	transition: .3s ease-out
-}
-.waves-effect .waves-ripple {
-	position: absolute;
-	border-radius: 50%;
-	width: 20px;
-	height: 20px;
-	margin-top: -10px;
-	margin-left: -10px;
-	opacity: 0;
-	background: rgba(0, 0, 0, 0.2);
-	transition: all 0.7s ease-out;
-	transition-property: transform, opacity;
-	transform: scale(0);
-	pointer-events: none
-}
-.waves-effect.waves-light .waves-ripple {
-	background-color: rgba(255, 255, 255, 0.45)
-}
-.waves-effect.waves-red .waves-ripple {
-	background-color: rgba(244, 67, 54, 0.7)
-}
-.waves-effect.waves-yellow .waves-ripple {
-	background-color: rgba(255, 235, 59, 0.7)
-}
-.waves-effect.waves-orange .waves-ripple {
-	background-color: rgba(255, 152, 0, 0.7)
-}
-.waves-effect.waves-purple .waves-ripple {
-	background-color: rgba(156, 39, 176, 0.7)
-}
-.waves-effect.waves-green .waves-ripple {
-	background-color: rgba(76, 175, 80, 0.7)
-}
-.waves-effect.waves-teal .waves-ripple {
-	background-color: rgba(0, 150, 136, 0.7)
-}
-.waves-effect input[type="button"],
-.waves-effect input[type="reset"],
-.waves-effect input[type="submit"] {
-	border: 0;
-	font-style: normal;
-	font-size: inherit;
-	text-transform: inherit;
-	background: none
-}
-.waves-effect img {
-	position: relative;
-	z-index: -1
-}
-.waves-notransition {
-	transition: none !important
-}
-.waves-circle {
-	transform: translateZ(0);
-	-webkit-mask-image: -webkit-radial-gradient(circle, #fff 100%, #000 100%)
-}
-.waves-input-wrapper {
-	border-radius: 0.2em;
-	vertical-align: bottom
-}
-.waves-input-wrapper .waves-button-input {
-	position: relative;
-	top: 0;
-	left: 0;
-	z-index: 1
-}
-.waves-circle {
-	text-align: center;
-	width: 2.5em;
-	height: 2.5em;
-	line-height: 2.5em;
-	border-radius: 50%;
-	-webkit-mask-image: none
-}
-.waves-block {
-	display: block
-}
-.waves-effect .waves-ripple {
-	z-index: -1
-}
 .modal {
 	display: none;
 	position: fixed;
@@ -4535,7 +4426,7 @@ body.keyboard-focused .dropdown-content li:focus {
 }
 .modal.modal-fixed-footer {
 	padding: 0;
-	height: 70%
+	height: 80%
 }
 .modal.modal-fixed-footer .modal-content {
 	position: absolute;

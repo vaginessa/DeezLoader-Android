@@ -80,7 +80,6 @@ function alencrypt(input) {
 	var encrypted;
 	encrypted =  cipher.update(data, 'utf8', 'binary') +  cipher.final('binary');
 	var encoded = new Buffer(iv, 'binary').toString('hex') + new Buffer(encrypted, 'binary').toString('hex');
-
 	return encoded;
 }
 
@@ -95,7 +94,6 @@ function aldecrypt(encoded) {
 	var decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 	var decrypted, plaintext;
 	plaintext = (decipher.update(edata, 'binary', 'utf8') + decipher.final('utf8'));
-
 	return plaintext;
 }
 
@@ -105,14 +103,14 @@ io.sockets.on('connection', function (socket) {
 	socket.currentItem = null;
 	socket.lastQueueId = null;
 
-	socket.on("login", function (username, password, autologin) {
-		Deezer.init(username, password, function (err) {
+	socket.on("login", function (username,password,autologin) {
+		Deezer.init(username,password,function (err) {
 			if(err){
 				socket.emit("login", err.message);
 				logger.logs('Error',"Failed to login, "+err.message);
 			}else{
 				if(autologin){
-					var data = username + "\n" + password;
+					var data = username+"\n"+password;
 					fs.outputFile(autologinLocation, alencrypt(data) , function(){
 						if(!err){
 							logger.logs('Info',"Added autologin successfully");
@@ -135,7 +133,6 @@ io.sockets.on('connection', function (socket) {
 			}
 			try{
 				var fdata = aldecrypt(data.toString('utf8'));
-
 			}catch(e){
 				logger.logs('Warning',"Invalid autologin file, deleting");
 				fs.unlink(autologinLocation,function(){

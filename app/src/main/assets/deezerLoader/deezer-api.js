@@ -8,64 +8,77 @@ module.exports = new Deezer();
 
 function Deezer() {
 	this.apiUrl = "http://www.deezer.com/ajax/gw-light.php";
-	this.apiQueries = {
-		api_version: "1.0",
-		api_token: "null",
-		input: "3"
-	};
 	this.httpHeaders = {
 		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36",
 		"Content-Language": "en-US",
 		"Cache-Control": "max-age=0",
 		"Accept": "*/*",
 		"Accept-Charset": "utf-8,ISO-8859-1;q=0.7,*;q=0.3",
-		"Accept-Language": "de-DE,de;q=0.8,en-US;q=0.6,en;q=0.4"
+		"Accept-Language": "en-US,en;q=0.9,en-US;q=0.8,en;q=0.7"
 	}
 	this.albumPicturesHost = "https://e-cdns-images.dzcdn.net/images/cover/";
-	this.reqStream = null;
+	this.reqStream = {}
+	this.delStream = []
 }
 
 var apiToken = null;
 Deezer.prototype.init = function(username, password, callback) {
     var self = this;
-    request.get({
-        url: self.apiUrl,
-        headers: self.httpHeaders,
-        qs: Object.assign({
-            method: "deezer.getUserData"
-        }, self.apiQueries),
-        json: true,
-        jar: true}, 
-		(function(err, res, body) {
-        if (!err && res.statusCode == 200) {
-            self.apiQueries.api_token = body.results.checkForm;
-			apiToken = body.results.checkForm;
-            request.post({
-                url: "https://www.deezer.com/ajax/action.php",
-                headers: this.httpHeaders,
-                form: {
-                    type: 'login',
-                    mail: username,
-                    password: password,
-                    checkFormLogin: body.results.checkFormLogin
-                },
-                jar: true
-            }, (function(err, res, body) {
-                if (err || res.statusCode != 200) {
-                    callback(new Error("Unable to load deezer.com"));
-                } else if (body.indexOf("success") > -1 || apiToken !== null) {
-                    callback(null, null);
-                } else {
-                    callback(new Error("Incorrect email or password."));
-                }
-            }));
-        } else {
-            callback(new Error("Unable to load deezer.com"));
-        }
-    }).bind(self));
+	request.post({
+		url: self.apiUrl,
+		qs: {
+			api_version: "1.0",
+			api_token: "null",
+			input: "3",
+			method: 'deezer.getUserData'
+		},
+		headers: self.httpHeaders,
+		jar: true,
+		json:true,
+	}, function(err, res, body) {
+		if(body.results.USER.USER_ID !== 0){
+			// login already done
+			callback(null, null);
+			return;
+		}
+		request.post({
+			url: "https://www.deezer.com/ajax/action.php",
+			headers: this.httpHeaders,
+			form: {
+				type:'login',
+				mail:username,
+				password:password,
+				checkFormLogin:body.results.checkFormLogin
+			},
+			jar: true
+		}, function(err, res, body) {
+			if(err || res.statusCode != 200) {
+				callback(new Error("Unable to load deezer.com"));
+			}else if(body.indexOf("success") > -1){
+				request.post({
+					url: self.apiUrl,
+					qs: {
+						api_version: "1.0",
+						api_token: "null",
+						input: "3",
+						method: 'deezer.getUserData'
+					},
+					headers: self.httpHeaders,
+					jar: true,
+					json:true,
+				}, function(err, res, body) {
+					if(!err && res.statusCode == 200) {
+						callback(null, null);
+					} else {
+						callback(new Error("Unable to load deezer.com "+err));
+					}
+				});
+			}else{
+				callback(new Error("Incorrect email or password."));
+			}
+		})
+	})
 }
-
-
 
 Deezer.prototype.getPlaylist = function(id, callback) {
 	getJSON("https://api.deezer.com/playlist/" + id, function(res){
@@ -348,8 +361,7 @@ Deezer.prototype.hasTrackAlternative = function(id, callback) {
 	}).bind(self));
 }
 
-Deezer.prototype.getDownloadUrl = function(md5Origin, id, format, mediaVersion, err) {
-
+Deezer.prototype.getDownloadUrl = function(md5Origin, id, format, mediaVersion) {
 	if(typeof md5Origin == 'undefined') {
 	    logger.logs("Error","md5Origin undefined for Deezer.prototype.getDownloadUrl");
 	}

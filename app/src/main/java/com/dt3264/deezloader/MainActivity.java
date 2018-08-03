@@ -63,15 +63,14 @@ public class MainActivity extends AppCompatActivity {
      * their last update and if it was a previous version, it updates the files
      * easy peasy ggg
      */
-    final int actualCompileNumber = 63;
+    final int actualCompileNumber = 211;
     /**
      * reloadNodeAppData when true, updates the node folder in the phone on each start
      * */
-    final boolean reloadNodeAppData = true;
-    final String actualVersion = "2.0.9";
+    final boolean reloadNodeAppData = false;
+    final String actualVersion = "2.1.1";
     final String url = "http://localhost:1730";
-    final String telegramUrl = "https://t.me/joinchat/EPuiFwzIphNKHgjOvPlBCQ";
-    final String lastCompileSharedPrefs="lastCompile";
+    final String telegramUrl = "https://t.me/deezloaderandroidportal";
     int lastCompile;
     SharedPreferences sharedPreferences;
 
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         snackbar.show();
         run();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        lastCompile = sharedPreferences.getInt(lastCompileSharedPrefs, 0);
+        lastCompile = sharedPreferences.getInt("lastCompile",0);
         if (savedInstanceState == null) compruebaPermisos();
         else muestraPagina();
     }
@@ -193,13 +192,13 @@ public class MainActivity extends AppCompatActivity {
     String[] pasteResult;
     OkHttpClient client = new OkHttpClient();
     void run() {
-        Request request = new Request.Builder().url("https://pastebin.com/raw/PaPQVDwv").build();
+        Request request = new Request.Builder().url("https://pastebin.com/raw/rEubX2Lu").build();
         client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) { }
+            public void onFailure(@NonNull Call call, IOException e) { }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                pasteResult = response.body().string().split("\n");
+                pasteResult = Objects.requireNonNull(response.body()).string().split("\n");
                 if(!actualVersion.equals(pasteResult[0].trim())) {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -350,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveLastUpdateTime() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(lastCompileSharedPrefs, actualCompileNumber);
+        editor.putInt("lastCompile", actualCompileNumber);
         editor.apply();
     }
 

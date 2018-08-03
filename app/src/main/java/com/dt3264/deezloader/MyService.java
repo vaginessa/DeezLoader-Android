@@ -135,7 +135,6 @@ public class MyService extends Service {
                 .setOngoing(false)
                 //.setDeleteIntent(getDeleteIntent())  // if needed
                 .build();
-        notification.flags = notification.flags;// | Notification.FLAG_NO_CLEAR;     // NO_CLEAR makes the notification stay when the user performs a "delete all" command
         startForeground(MAIN_NOTIFICATION_ID, notification);
     }
 
@@ -220,6 +219,7 @@ public class MyService extends Service {
             public void call(Object... args) {
                 String url = (String)args[0];
                 Intent i = new Intent(Intent.ACTION_VIEW);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 i.setData(Uri.parse(url));
                 startActivity(i);
             }
@@ -310,8 +310,11 @@ public class MyService extends Service {
         try {
             //create output directory if it doesn't exist
             File dir = new File(outputPath);
-            if (!dir.exists()) {
+            try {if (!dir.exists()) {
                 dir.mkdirs();
+            }} catch (Exception e) {
+                Log.e("tag", e.getMessage());
+                socket.emit("log", "Exception: " + e.getMessage());
             }
 
             in = new FileInputStream(inputPath + inputFile);
@@ -320,28 +323,25 @@ public class MyService extends Service {
             DocumentFile file = null;
             if(outputPath.endsWith("mp3")) file = pickedDir.createFile("audio/mpeg3", outputPath);
             else file = pickedDir.createFile("audio/flac", outputPath);
-            out = getContentResolver().openOutputStream(file.getUri());
+            out = getContentResolver().openOutputStream(Objects.requireNonNull(file).getUri());
             try {
                 byte[] buffer = new byte[1024];
                 int read;
                 while ((read = in.read(buffer)) != -1) {
                     Objects.requireNonNull(out).write(buffer, 0, read);
                 }
-            }
-            catch (IOException e){
+            } catch (IOException e){
                 socket.emit("log", "IOException: " + e.getMessage());
             }
             in.close();
             // write the output file (You have now copied the file)
             Objects.requireNonNull(out).flush();
             out.close();
-        }
-        catch (FileNotFoundException fnfe1) {
+        } catch (FileNotFoundException fnfe1) {
             /* I get the error here */
             Log.e("tag", fnfe1.getMessage());
             socket.emit("log", "FileNotFoundException: " + fnfe1.getMessage());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e("tag", e.getMessage());
             socket.emit("log", "Exception: " + e.getMessage());
         }
