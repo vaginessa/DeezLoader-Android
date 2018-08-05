@@ -6,8 +6,14 @@ if(typeof mainApp !== "undefined"){
 	var defaultUserSettings = mainApp.defaultSettings;
 	var defaultDownloadLocation = mainApp.defaultDownloadDir;
 }
+
+homedata = "/storage/emulated/0";
+userdata = homedata + "/Deezloader/";
+const autologinLocation = userdata+"autologin";
+const configFileLocation = userdata+"config.json";
+
 let userSettings = [];
-let Username = "";
+socket.emit("wipeuser");
 
 let preview_track = document.getElementById('preview-track');
 let preview_stopped = true;
@@ -22,6 +28,17 @@ function sleep(milliseconds) {
 }
 
 socket.emit("autologin");
+
+socket.on("wipeuser", function() {
+    username = "";
+    password = "";
+    Username = "";
+});
+
+socket.on("fixloginbutt", function() {
+    $('#modal_login_btn_login').attr("disabled",false);
+    $('#modal_login_btn_login').html("Login");
+});
 
 socket.on("message", function(title, msg){
 	message(title, msg);
@@ -48,12 +65,15 @@ socket.on("autologin",function(username,password){
 	M.updateTextFields();
 	socket.emit('login',username,password,false);
 });
+
 socket.on("login", function (errmsg) {
 	if (errmsg == "none") {
 		$("#modal_settings_username").html(Username);
 		$('#initializing').addClass('animated fadeOut').on('webkitAnimationEnd', function () {
 			$(this).css('display', 'none');
 			$(this).removeClass('animated fadeOut');
+			socket.emit("fixloginbutt");
+			socket.emit("wipeuser");
 		});
 
 	    // Load top charts list for countries
@@ -61,20 +81,11 @@ socket.on("login", function (errmsg) {
 	    socket.emit("getChartsTrackListByCountry", {country: userSettings.chartsCountry});
 	    socket.emit("getMePlaylistList", {});
 	}else{
+	    socket.emit("fixloginbutt");
+	    socket.emit("wipeuser");
 	    fs.unlink(autologinLocation,function(){});
 	    $('#login-res-text').text(errmsg);
 		setTimeout(function(){$('#login-res-text').text("");},10000);
-	}
-	$('#modal_login_btn_login').attr("disabled", false);
-	$('#modal_login_btn_login').html("Login");
-});
-
-// Open downloads folder
-$('#openDownloadsFolder').on('click', function () {
-	if(typeof shell !== "undefined"){
-		shell.showItemInFolder(userSettings.downloadLocation + path.sep + '.');
-	}else{
-		alert("For security reasons, this button will do nothing.");
 	}
 });
 
@@ -117,9 +128,7 @@ $(document).ready(function () {
 			$('.preview_controls').text("play_arrow");
 		}
 	});
-
 	$('.modal').modal();
-
 });
 
 // Load settings
@@ -195,6 +204,7 @@ $('#modal_settings_btn_logout').click(function () {
 			$(this).css('display', '');
 		});
 		socket.emit('logout');
+		socket.emit("wipeuser");
 		$('#modal_login_input_username').val("");
 		$('#modal_login_input_password').val("");
 		$('#modal_login_input_autologin').prop("checked",false);
@@ -231,7 +241,6 @@ function message(title, message) {
 	$('#modal_msg_message').html(message);
 
 	$('#modal_msg').modal('open');
-
 }
 
 //###############################################TAB_URL##############################################\\
@@ -289,7 +298,6 @@ $('#tab_search_form_search').submit(function (ev) {
 	$('#tab_search_table_results_tbody_loadingIndicator').removeClass('hide');
 
 	socket.emit("search", {type: mode, text: searchString});
-
 });
 
 socket.on('search', function (data) {
@@ -432,7 +440,7 @@ function showResults_table_playlist(playlists) {
 }
 
 function generateShowTracklistSelectiveButton(link) {
-	var btn_showTrackListSelective = $('<a href="#" class="waves-effect btn-flat"><i class="material-icons">list</i></a>');
+	var btn_showTrackListSelective = $('<a href="#" class="btn-flat"><i class="material-icons">list</i></a>');
 	$(btn_showTrackListSelective).click(function (ev){
 		ev.preventDefault();
 		showTrackListSelective(link);
@@ -441,7 +449,7 @@ function generateShowTracklistSelectiveButton(link) {
 }
 
 function generateShowTracklistButton(link) {
-	var btn_showTrackList = $('<a href="#" class="waves-effect btn-flat"><i class="material-icons">list</i></a>');
+	var btn_showTrackList = $('<a href="#" class="btn-flat"><i class="material-icons">list</i></a>');
 	$(btn_showTrackList).click(function (ev) {
 		ev.preventDefault();
 		showTrackList(link);
@@ -773,7 +781,6 @@ function alreadyInQueue(id) {
 	});
 
 	return alreadyInQueue;
-
 }
 
 socket.on('addToQueue', function (data) {
@@ -783,13 +790,13 @@ socket.on('addToQueue', function (data) {
 	$(tableBody).append(
 			'<tr id="' + data.queueId + '" data-deezerid="' + data.id + '">' +
 			'<td class="queueTitle">' + data.name + '</td>' +
-			'<td class="queueSize">' + data.size + '</td>' +
-			'<td class="queueDownloaded">' + data.downloaded + '</td>' +
-			'<td class="queueFailed">' + data.failed + '</td>' +
-			'<td class="progressText"><div class="progress"><div class="indeterminate"></div></div></td>' +
+			'<td class="queueSize center">' + data.size + '</td>' +
+			'<td class="queueDownloaded center">' + data.downloaded + '</td>' +
+			'<td class="queueFailed center">' + data.failed + '</td>' +
+			'<td class="progressText"><div class="progress center"><div class="indeterminate center"></div></div></td>' +
 			'</tr>');
 
-	var btn_remove = $('<a href="#" class="btn-flat waves-effect" style="padding: 0;"><i class="material-icons">remove</i></a>');
+	var btn_remove = $('<a href="#" class="btn-flat" style="padding: 0;"><i class="material-icons">remove</i></a>');
 
 	$(btn_remove).click(function (ev) {
 
@@ -800,14 +807,12 @@ socket.on('addToQueue', function (data) {
 	});
 
 	btn_remove.appendTo(tableBody.children('tr:last')).wrap('<td class="eventBtn center">');
-
 });
 
 socket.on("downloadStarted", function (data) {
 
 	$('#' + data.queueId).find('.indeterminate').removeClass('indeterminate').addClass('determinate');
 	$('#' + data.queueId).find('.eventBtn').find('a').html('<i class="material-icons">clear</i>');
-
 });
 
 socket.on('updateQueue', function (data) {
@@ -828,7 +833,6 @@ socket.on('updateQueue', function (data) {
 		$('#' + data.queueId).addClass('error');
 		M.toast({html: '<i class="material-icons">error</i>One download failed!', displayLength: 5000, classes: 'rounded'})
 	}
-
 });
 
 socket.on("downloadProgress", function (data) {
@@ -902,7 +906,7 @@ function getTypeFromLink(link) {
 }
 
 function generateDownloadLink(url) {
-	var btn_download = $('<a href="#" class="waves-effect btn-flat"><i class="material-icons">file_download</i></a>');
+	var btn_download = $('<a href="#" class="btn-flat"><i class="material-icons">file_download</i></a>');
 	$(btn_download).click(function (ev) {
 		ev.preventDefault();
 		addToQueue(url);

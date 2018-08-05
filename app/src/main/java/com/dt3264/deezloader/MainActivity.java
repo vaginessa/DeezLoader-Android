@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
      * their last update and if it was a previous version, it updates the files
      * easy peasy ggg
      */
-    final int actualCompileNumber = 211;
+    final int actualCompileNumber = 212;
     /**
      * reloadNodeAppData when true, updates the node folder in the phone on each start
      * */
     final boolean reloadNodeAppData = false;
-    final String actualVersion = "2.1.1";
+    final String actualVersion = "2.1.2";
     final String url = "http://localhost:1730";
     final String telegramUrl = "https://t.me/deezloaderandroidportal";
     int lastCompile;

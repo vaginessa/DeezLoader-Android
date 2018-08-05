@@ -21,7 +21,6 @@ function Deezer() {
 	this.delStream = []
 }
 
-var apiToken = null;
 Deezer.prototype.init = function(username, password, callback) {
     var self = this;
 	request.post({
@@ -33,7 +32,7 @@ Deezer.prototype.init = function(username, password, callback) {
 			method: 'deezer.getUserData'
 		},
 		headers: self.httpHeaders,
-		jar: true,
+		jar:true,
 		json:true,
 	}, function(err, res, body) {
 		if(body.results.USER.USER_ID !== 0){
@@ -50,7 +49,7 @@ Deezer.prototype.init = function(username, password, callback) {
 				password:password,
 				checkFormLogin:body.results.checkFormLogin
 			},
-			jar: true
+			jar:true
 		}, function(err, res, body) {
 			if(err || res.statusCode != 200) {
 				callback(new Error("Unable to load deezer.com"));
@@ -64,7 +63,7 @@ Deezer.prototype.init = function(username, password, callback) {
 						method: 'deezer.getUserData'
 					},
 					headers: self.httpHeaders,
-					jar: true,
+					jar:true,
 					json:true,
 				}, function(err, res, body) {
 					if(!err && res.statusCode == 200) {
@@ -365,7 +364,6 @@ Deezer.prototype.getDownloadUrl = function(md5Origin, id, format, mediaVersion) 
 	if(typeof md5Origin == 'undefined') {
 	    logger.logs("Error","md5Origin undefined for Deezer.prototype.getDownloadUrl");
 	}
-
 	var urlPart = md5Origin + "¤" + format + "¤" + id + "¤" + mediaVersion;
 	var md5sum = crypto.createHash('md5');
 	md5sum.update(new Buffer(urlPart, 'binary'));

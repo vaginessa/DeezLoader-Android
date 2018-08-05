@@ -44,7 +44,7 @@ if( typeof configFile.userDefined.numplaylistbyalbum != "boolean" ||
 	typeof configFile.userDefined.spotifyUser != "string"){
 		fs.outputFileSync(userdata+"config.json",fs.readFileSync(__dirname+path.sep+"default.json",'utf8'));
 		configFile = require(userdata+path.sep+"config.json");
-}
+    }
 
 // Main Constants
 const configFileLocation = userdata+"config.json";
@@ -77,8 +77,7 @@ function alencrypt(input) {
 	var data = new Buffer(input).toString('binary');
 	key = new Buffer(ekey, "utf8");
 	var cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-	var encrypted;
-	encrypted =  cipher.update(data, 'utf8', 'binary') +  cipher.final('binary');
+	var encrypted = cipher.update(data, 'utf8', 'binary') +  cipher.final('binary');
 	var encoded = new Buffer(iv, 'binary').toString('hex') + new Buffer(encrypted, 'binary').toString('hex');
 	return encoded;
 }
@@ -86,11 +85,9 @@ function alencrypt(input) {
 function aldecrypt(encoded) {
 	var combined = new Buffer(encoded, 'hex');
 	key = new Buffer(ekey, "utf8");
-	// Create iv
 	var iv = new Buffer(16);
 	combined.copy(iv, 0, 0, 16);
 	edata = combined.slice(16).toString('binary');
-	// Decipher encrypted data
 	var decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
 	var decrypted, plaintext;
 	plaintext = (decipher.update(edata, 'binary', 'utf8') + decipher.final('utf8'));
@@ -108,6 +105,9 @@ io.sockets.on('connection', function (socket) {
 			if(err){
 				socket.emit("login", err.message);
 				logger.logs('Error',"Failed to login, "+err.message);
+                fs.unlink(autologinLocation,function(){});
+                socket.emit("wipeuser");
+                socket.emit("fixloginbutt");
 			}else{
 				if(autologin){
 					var data = username+"\n"+password;
@@ -121,6 +121,7 @@ io.sockets.on('connection', function (socket) {
 				}
 				socket.emit("login", "none");
 				logger.logs('Info',"Logged in successfully");
+				socket.emit("wipeuser");
 			}
 		});
 	});
@@ -135,8 +136,7 @@ io.sockets.on('connection', function (socket) {
 				var fdata = aldecrypt(data.toString('utf8'));
 			}catch(e){
 				logger.logs('Warning',"Invalid autologin file, deleting");
-				fs.unlink(autologinLocation,function(){
-				});
+				fs.unlink(autologinLocation,function(){});
 				return;
 			}
 			fdata = fdata.split('\n');
@@ -146,8 +146,10 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on("logout", function(){
 		logger.logs('Info',"Logged out");
-		fs.unlink(autologinLocation,function(){
-		});
+		fs.unlink(autologinLocation,function(){});
+		fs.unlink(configFileLocation,function(){});
+		socket.emit("wipeuser");
+		socket.emit("fixloginbutt");
 		return;
 	});
 
@@ -166,9 +168,9 @@ io.sockets.on('connection', function (socket) {
 		} else {
 			complete = track.FILESIZE_MP3_128 || 0;
 		}
-		let totalProgress = parseInt((progress/complete)*100);
-		if(totalProgress!==lastPercentage){
-			lastPercentage = totalProgress;
+		let currentProgress = parseInt((progress/complete)*100);
+		if(currentProgress!==lastPercentage){
+			lastPercentage = currentProgress;
 			io.sockets.emit("progressData", lastPercentage, track.SNG_TITLE + ' - ' +  track.ART_NAME);
 		}
 
@@ -247,7 +249,6 @@ io.sockets.on('connection', function (socket) {
 					socket.downloadQueue.shift();
 				}
 				socket.currentItem = null;
-				//fs.rmdirSync(coverArtDir);
 				queueDownload(getNextDownload());
 			});
 		} else if (downloading.type == "playlist") {
@@ -955,7 +956,6 @@ io.sockets.on('connection', function (socket) {
 							}
 						}
 
-
 						if(ajson.label){
 							metadata.publisher = ajson.label;
 						}
@@ -1174,7 +1174,7 @@ io.sockets.on('connection', function (socket) {
 									);
 								}
 								if(metadata.unsynchronisedLyrics){
-									flacComments.push('LYRICS='+metadata.unsynchronisedLyrics.lyrics);
+									flacComments.push('LYRICS=' + metadata.unsynchronisedLyrics.lyrics);
 								}
 								if(metadata.genre){
 									flacComments.push('GENRE=' + metadata.genre);
