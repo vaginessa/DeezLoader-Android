@@ -160,19 +160,30 @@ io.sockets.on('connection', function (socket) {
 		if (!track.trackSocket) {
 			return;
 		}
-        let size;
-		if(configFile.userDefined.audioQuality == "128" && track.FILESIZE_MP3_128 > 0){
-            size = track.FILESIZE_MP3_128;
-        }else if(configFile.userDefined.audioQuality == "256" && track.FILESIZE_MP3_256 > 0){
-            size = track.FILESIZE_MP3_256;
-        }else if(configFile.userDefined.audioQuality == "320" && track.FILESIZE_MP3_320 > 0){
-            size = track.FILESIZE_MP3_320;
-        }else if(configFile.userDefined.audioQuality == "flac" && track.FILESIZE_FLAC > 0){
-            size = track.FILESIZE_FLAC;
+
+		if(configFile.userDefined.audioQuality == "128"){
+            if(track.FILESIZE_MP3_128 > 0){
+                complete = track.FILESIZE_MP3_128;
+            }
         }
 
-        complete = size;
+        if(configFile.userDefined.audioQuality == "320"){
+            if(track.FILESIZE_MP3_320 > 0){
+                complete = track.FILESIZE_MP3_320;
+            }else if(track.FILESIZE_MP3_128 > 0){
+                complete = track.FILESIZE_MP3_128;
+            }
+        }
 
+        if(configFile.userDefined.audioQuality == "flac"){
+            if(track.FILESIZE_FLAC > 0){
+                complete = track.FILESIZE_FLAC;
+            }else if(track.FILESIZE_MP3_320 > 0){
+                complete = track.FILESIZE_MP3_320;
+            }else if(track.FILESIZE_MP3_128 > 0){
+                complete = track.FILESIZE_MP3_128;
+            }
+        }
 		let currentProgress = parseInt((progress/complete)*100);
 		if(currentProgress!==lastPercentage){
 			lastPercentage = currentProgress;
@@ -180,21 +191,35 @@ io.sockets.on('connection', function (socket) {
 		}
 
 		if(track.trackSocket.currentItem.type == "track"){
-			let complete;
 			if (!track.trackSocket.currentItem.percentage) {
 				track.trackSocket.currentItem.percentage = 0;
 			}
-			if(configFile.userDefined.audioQuality == "128" && track.FILESIZE_MP3_128 > 0){
-                complete = track.FILESIZE_MP3_128;
-            }else if(configFile.userDefined.audioQuality == "256" && track.FILESIZE_MP3_256 > 0){
-                complete = track.FILESIZE_MP3_256;
-            }else if(configFile.userDefined.audioQuality == "320" && track.FILESIZE_MP3_320 > 0){
-                complete = track.FILESIZE_MP3_320;
-            }else if(configFile.userDefined.audioQuality == "flac" && track.FILESIZE_FLAC > 0){
-                complete = track.FILESIZE_FLAC;
+
+		    if(configFile.userDefined.audioQuality == "128"){
+                if(track.FILESIZE_MP3_128 > 0){
+                    complete = track.FILESIZE_MP3_128;
+                }
             }
 
-			let percentage = (progress / complete) * 100;
+            if(configFile.userDefined.audioQuality == "320"){
+                if(track.FILESIZE_MP3_320 > 0){
+                    complete = track.FILESIZE_MP3_320;
+                }else if(track.FILESIZE_MP3_128 > 0){
+                    complete = track.FILESIZE_MP3_128;
+                }
+            }
+
+            if(configFile.userDefined.audioQuality == "flac"){
+                if(track.FILESIZE_FLAC > 0){
+                    complete = track.FILESIZE_FLAC;
+                }else if(track.FILESIZE_MP3_320 > 0){
+                    complete = track.FILESIZE_MP3_320;
+                }else if(track.FILESIZE_MP3_128 > 0){
+                    complete = track.FILESIZE_MP3_128;
+                }
+            }
+
+		    let percentage = (progress / complete) * 100;
 
 			if ((percentage - track.trackSocket.currentItem.percentage > 1) || (progress == complete)) {
 				track.trackSocket.currentItem.percentage = percentage;

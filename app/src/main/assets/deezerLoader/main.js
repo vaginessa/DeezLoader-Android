@@ -23,6 +23,7 @@ function loadSettings(){
 	if( typeof appConfig.userDefined.numplaylistbyalbum != "boolean" ||
 			typeof appConfig.userDefined.syncedlyrics != "boolean" ||
 		 	typeof appConfig.userDefined.padtrck != "boolean" ||
+		 	typeof appConfig.userDefined.audioQuality != "string" ||
 	 		typeof appConfig.userDefined.albumNameTemplate != "string"
 		){
 		fs.outputFileSync(userdata+"config.json",fs.readFileSync(__dirname+path.sep+"default.json",'utf8'));
