@@ -97,6 +97,18 @@
 		<div class="row">
 			<div class="input-field col s12">
 				<i class="material-icons prefix">label</i>
+				<select name="audioQuality" id="modal_settings_select_audioQuality">
+                    <option value="128">MP3 128</option>
+					<option value="256">MP3 256</option>
+					<option value="320" selected>MP3 320</option>
+					<option value="flac">FLAC 1411</option>
+				</select>
+				<label for="modal_settings_select_audioQuality">Audio Bitrate</label>
+			</div>
+		</div>
+		<div class="row">
+			<div class="input-field col s12">
+				<i class="material-icons prefix">label</i>
 				<select name="chartsCountry" id="modal_settings_select_chartsCounrty"></select>
 				<label for="modal_settings_select_chartsCounrty">Default Country for Charts</label>
 			</div>
@@ -124,12 +136,6 @@
 			<label class="col s12">
 				<input type="checkbox" id="modal_settings_cbox_createAlbumFolder" class="filled-in"/>
 				<span>Create folder for albums</span>
-			</label>
-		</div>
-		<div class="row">
-			<label class="col s12">
-				<input type="checkbox" id="modal_settings_cbox_hifi" class="filled-in"/>
-				<span class="tooltipped" data-position="top" data-delay="500" data-tooltip="Downloads a FLAC file if it is available">Enable HIFI</span>
 			</label>
 		</div>
 		<div class="row">
@@ -400,44 +406,35 @@
 		</div>
 	</div>
 	<div class="modal-footer">
-		<a href="#" class="modal-close btn">I got it!</a>
+		<a href="#" class="modal-close btn">Okay</a>
 	</div>
 </div>
 
 <!--********************************************MAIN-CONTENT********************************************-->
-<nav class="nav-extended">
+<nav class="nav-extended" style="position:fixed!important; z-index:98;">
   <div class="nav-wrapper">
 		<ul id="nav-mobile">
 			<li class="floatLeft">
 				<a href="#modal_settings" id="nav_btn_openSettingsModal" class="modal-trigger">
-					<i class="material-icons left">settings</i> <span class="hide-on-small-and-down">Settings</span>
+					<i class="material-icons center">settings</i>
 				</a>
 			</li>
-			<li class="titleText">Deezloader Remix</li>
+			<li class="titleText floatLeft" style="margin-top:auto; margin-bottom:auto;">Deezloader Remix</li>
 			<li class="floatRight">
 				<a href="#modal_about" class="modal-trigger">
-					<i class="material-icons left">more_horiz</i> <span class="hide-on-small-and-down">More</span>
+					<i class="material-icons center">more_horiz</i>
 				</a>
 			</li>
 		</ul>
   </div>
 </nav>
 
-<main class="container">
-  <ul id="tab-nav" class="row tabs">
-    <li class="tab"><a class="active" href="#tab_search">Search</a></li>
-    <li class="tab"><a href="#tab_charts">Charts</a></li>
-    <li class="tab"><a href="#tab_playlists">Playlists</a></li>
-    <li class="tab"><a href="#tab_url">Download from URL</a></li>
-    <li class="tab"><a href="#tab_downloads">Downloads</a></li>
-  </ul>
-
+<main class="container" style="margin-top:64px; margin-bottom:54px;">
   <div id="main-content" class="row">
-
     <div id="tab_search">
       <form id="tab_search_form_search">
         <div class="inline-input-group col s12">
-          <input id="tab_search_form_search_input_searchString" type="text" class="input" placeholder="Start searching ...">
+          <input id="tab_search_form_search_input_searchString" type="text" class="input" placeholder="Search Deezer">
           <button class="btn btn-large btn-flat indigo white-text"><i class="material-icons">search</i></button>
         </div>
         <p class="col s3 center trackBtn">
@@ -510,7 +507,6 @@
 				</table>
 			</div>
     </div>
-
     <div id="tab_charts">
       <div class="input-field col s12">
         <select id="tab_charts_select_country" class="icons"></select>
@@ -543,7 +539,6 @@
         <tbody id="tab_charts_table_charts_tbody_charts" class="row"></tbody>
       </table>
     </div>
-
     <div id="tab_url">
       <form id="tab_url_form_url" class="row">
         <div class="inline-input-group">
@@ -552,10 +547,9 @@
         </div>
       </form>
     </div>
-
     <div id="tab_playlists" class="row">
       <div class="col s12">
-        <button class="btn-flat" id="button_refresh_playlist_tab" style="width:100%;">Refresh Playlist List</button>
+        <button class="btn-flat" id="button_refresh_playlist_tab" style="width:100%;">Refresh Playlists</button>
       </div>
       <div class="col s12">
         <table class="striped">
@@ -585,7 +579,6 @@
         </table>
       </div>
     </div>
-
     <div id="tab_downloads">
       <div class="row">
         <div class="col s12">
@@ -609,7 +602,7 @@
   </div>
 </main>
 
-<div class="fixed-action-btn" id="btn_scrollToTop" style="bottom: 45px; right: 24px;">
+<div class="fixed-action-btn" id="btn_scrollToTop" style="bottom: 70px; right: 24px;">
   <a class="btn-floating btn-large red scale-transition scale-out">
     <i class="large material-icons">keyboard_arrow_up</i>
   </a>
@@ -617,6 +610,14 @@
 <audio id="preview-track">
   <source id="preview-track_source" src="" type="audio/mpeg">
 </audio>
+
+<footer id="tab-nav" class="page-footer row tabs" style="border-top: 1px solid gray; z-index: 98;">
+    <li class="tab col s2"><a class="active" href="#tab_search">Search</a></li>
+    <li class="tab col s2"><a href="#tab_charts">Charts</a></li>
+    <li class="tab col s2"><a href="#tab_playlists">Playlists</a></li>
+    <li class="tab col s2"><a href="#tab_url">Download from URL</a></li>
+    <li class="tab col s2"><a href="#tab_downloads">Downloads</a></li>
+</footer>
 
 <footer class="indigo darken-1 center page-footer hide-on-med-and-down">
     <div class="container">

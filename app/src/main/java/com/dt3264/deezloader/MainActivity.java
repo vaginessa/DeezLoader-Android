@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * reloadNodeAppData when true, updates the node folder in the phone on each start
      * */
-    final boolean reloadNodeAppData = false;
+    final boolean reloadNodeAppData = true;
     final String actualVersion = "2.1.2";
     final String url = "http://localhost:1730";
     final String telegramUrl = "https://t.me/deezloaderandroidportal";

@@ -40,6 +40,7 @@ if( typeof configFile.userDefined.numplaylistbyalbum != "boolean" ||
 	typeof configFile.userDefined.extendedTags != "boolean"||
 	typeof configFile.userDefined.partOfSet != "boolean"||
 	typeof configFile.userDefined.chartsCountry != "string"||
+	typeof configFile.userDefined.audioQuality != "string"||
 	typeof configFile.userDefined.albumNameTemplate != "string" ||
 	typeof configFile.userDefined.spotifyUser != "string"){
 		fs.outputFileSync(userdata+"config.json",fs.readFileSync(__dirname+path.sep+"default.json",'utf8'));
@@ -60,6 +61,8 @@ let mainFolder = defaultDownloadDir;
 if (configFile.userDefined.downloadLocation != null) {
 	mainFolder = configFile.userDefined.downloadLocation;
 }
+
+let lastPercentage=100;
 
 initFolders();
 // END
@@ -153,21 +156,23 @@ io.sockets.on('connection', function (socket) {
 		return;
 	});
 
-	let lastPercentage=100;
 	Deezer.onDownloadProgress = function (track, progress) {
 		if (!track.trackSocket) {
 			return;
 		}
-		
-		if(configFile.userDefined.hifi){
-            complete = track.FILESIZE_FLAC;
-        } else if (track.FILESIZE_MP3_320) {
-			complete = track.FILESIZE_MP3_320;
-		} else if (track.FILESIZE_MP3_256) {
-			complete = track.FILESIZE_MP3_256;
-		} else {
-			complete = track.FILESIZE_MP3_128 || 0;
-		}
+        let size;
+		if(configFile.userDefined.audioQuality == "128" && track.FILESIZE_MP3_128 > 0){
+            size = track.FILESIZE_MP3_128;
+        }else if(configFile.userDefined.audioQuality == "256" && track.FILESIZE_MP3_256 > 0){
+            size = track.FILESIZE_MP3_256;
+        }else if(configFile.userDefined.audioQuality == "320" && track.FILESIZE_MP3_320 > 0){
+            size = track.FILESIZE_MP3_320;
+        }else if(configFile.userDefined.audioQuality == "flac" && track.FILESIZE_FLAC > 0){
+            size = track.FILESIZE_FLAC;
+        }
+
+        complete = size;
+
 		let currentProgress = parseInt((progress/complete)*100);
 		if(currentProgress!==lastPercentage){
 			lastPercentage = currentProgress;
@@ -179,17 +184,15 @@ io.sockets.on('connection', function (socket) {
 			if (!track.trackSocket.currentItem.percentage) {
 				track.trackSocket.currentItem.percentage = 0;
 			}
-			if(configFile.userDefined.hifi){
-				complete = track.FILESIZE_FLAC;
-			}else{
-				if (track.FILESIZE_MP3_320) {
-					complete = track.FILESIZE_MP3_320;
-				} else if (track.FILESIZE_MP3_256) {
-					complete = track.FILESIZE_MP3_256;
-				} else {
-					complete = track.FILESIZE_MP3_128 || 0;
-				}
-			}
+			if(configFile.userDefined.audioQuality == "128" && track.FILESIZE_MP3_128 > 0){
+                complete = track.FILESIZE_MP3_128;
+            }else if(configFile.userDefined.audioQuality == "256" && track.FILESIZE_MP3_256 > 0){
+                complete = track.FILESIZE_MP3_256;
+            }else if(configFile.userDefined.audioQuality == "320" && track.FILESIZE_MP3_320 > 0){
+                complete = track.FILESIZE_MP3_320;
+            }else if(configFile.userDefined.audioQuality == "flac" && track.FILESIZE_FLAC > 0){
+                complete = track.FILESIZE_FLAC;
+            }
 
 			let percentage = (progress / complete) * 100;
 
@@ -412,7 +415,7 @@ io.sockets.on('connection', function (socket) {
 	}
 
 	socket.on("downloadtrack", function (data) {
-		Deezer.getTrack(data.id, configFile.userDefined.hifi, function (track, err) {
+		Deezer.getTrack(data.id, configFile.userDefined.audioQuality, function (track, err) {
 			if (err) {
 				return;
 			}
@@ -814,7 +817,7 @@ io.sockets.on('connection', function (socket) {
 
 	function downloadTrack(id, settings, altmetadata, callback) {
 		logger.logs('Info',"Getting track data");
-		Deezer.getTrack(id[0], configFile.userDefined.hifi, function (track, err) {
+		Deezer.getTrack(id[0], configFile.userDefined.audioQuality, function (track, err) {
 			if (err) {
 				if(id[1] != 0){
 					logger.logs('Warning',"Failed to download track, falling on alternative");

@@ -10,7 +10,7 @@
 		"createAlbumFolder": false,
 		"downloadLocation": null,
 		"artworkSize": "/800x800.jpg",
-		"hifi": false,
+		"audioQuality": "320",
 		"padtrck": false,
 		"syncedlyrics": false,
 		"numplaylistbyalbum": false,

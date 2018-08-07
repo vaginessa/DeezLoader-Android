@@ -170,7 +170,7 @@ $('#modal_settings_btn_saveSettings').click(function () {
 		createAlbumFolder: $('#modal_settings_cbox_createAlbumFolder').is(':checked'),
 		downloadLocation: $('#modal_settings_input_downloadTracksLocation').val(),
 		artworkSize: $('#modal_settings_select_artworkSize').val(),
-		hifi: $('#modal_settings_cbox_hifi').is(':checked'),
+		audioQuality: $('#modal_settings_select_audioQuality').val(),
 		padtrck: $('#modal_settings_cbox_padtrck').is(':checked'),
 		syncedlyrics: $('#modal_settings_cbox_syncedlyrics').is(':checked'),
 		numplaylistbyalbum: $('#modal_settings_cbox_numplaylistbyalbum').is(':checked'),
@@ -219,7 +219,7 @@ function fillSettingsModal(settings) {
 	$('#modal_settings_cbox_createM3UFile').prop('checked', settings.createM3UFile);
 	$('#modal_settings_cbox_createArtistFolder').prop('checked', settings.createArtistFolder);
 	$('#modal_settings_cbox_createAlbumFolder').prop('checked', settings.createAlbumFolder);
-	$('#modal_settings_cbox_hifi').prop('checked', settings.hifi);
+	$('#modal_settings_select_audioQuality').val(settings.audioQuality);
 	$('#modal_settings_cbox_padtrck').prop('checked', settings.padtrck);
 	$('#modal_settings_cbox_syncedlyrics').prop('checked', settings.syncedlyrics);
 	$('#modal_settings_cbox_numplaylistbyalbum').prop('checked', settings.numplaylistbyalbum);

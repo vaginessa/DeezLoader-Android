@@ -213,7 +213,7 @@ Deezer.prototype.getMePlaylists = function(callback) {
 	else callback(null, null);
 }
 
-Deezer.prototype.getTrack = function(id, wantFlac, callback) {
+Deezer.prototype.getTrack = function(id, quality, callback) {
 	var scopedid = id;
 	var self = this;
 	request.get({url: "https://www.deezer.com/uk/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
@@ -245,18 +245,16 @@ Deezer.prototype.getTrack = function(id, wantFlac, callback) {
 			    logger.logs("Error","MD5_ORIGIN not resolved from Deezer.")
 			}
 			var format;
-			if(wantFlac && json["FILESIZE_FLAC"] > 0){
-				format = 9;
-			}else{
-				format = 3;
-				if(json["FILESIZE_MP3_320"] <= 0) {
-					if(json["FILESIZE_MP3_256"] > 0) {
-						format = 5;
-					} else {
-						format = 1;
-					}
-				}
-			}
+
+			if(quality == "128" && json["FILESIZE_MP3_128"] > 0){
+            	format = 1;
+            }else if(quality == "256" && json["FILESIZE_MP3_256"] > 0){
+             	format = 5;
+            }else if(quality == "320" && json["FILESIZE_MP3_320"] > 0){
+             	format = 3;
+            }else if(quality == "flac" && json["FILESIZE_FLAC"] > 0){
+                format = 9;
+            }
 			json.format = format;
 			var mediaVersion = parseInt(json["MEDIA_VERSION"]);
 			json.downloadUrl = self.getDownloadUrl(md5Origin, id, format, mediaVersion);
@@ -361,9 +359,6 @@ Deezer.prototype.hasTrackAlternative = function(id, callback) {
 }
 
 Deezer.prototype.getDownloadUrl = function(md5Origin, id, format, mediaVersion) {
-	if(typeof md5Origin == 'undefined') {
-	    logger.logs("Error","md5Origin undefined for Deezer.prototype.getDownloadUrl");
-	}
 	var urlPart = md5Origin + "¤" + format + "¤" + id + "¤" + mediaVersion;
 	var md5sum = crypto.createHash('md5');
 	md5sum.update(new Buffer(urlPart, 'binary'));
