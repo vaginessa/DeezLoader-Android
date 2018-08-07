@@ -410,7 +410,7 @@
 </div>
 
 <!--********************************************MAIN-CONTENT********************************************-->
-<nav class="nav-extended" style="position:fixed!important; z-index:98;">
+<nav class="nav-extended">
   <div class="nav-wrapper">
 		<ul id="nav-mobile">
 			<li class="floatLeft">
@@ -421,14 +421,14 @@
 			<li class="titleText floatLeft" style="margin-top:auto; margin-bottom:auto;">Deezloader Remix</li>
 			<li class="floatRight">
 				<a href="#modal_about" class="modal-trigger">
-					<i class="material-icons center">more_horiz</i>
+					<i class="material-icons center">info</i>
 				</a>
 			</li>
 		</ul>
   </div>
 </nav>
 
-<main class="container" style="margin-top:64px; margin-bottom:54px;">
+<main class="container" style="margin-bottom:54px;">
   <div id="main-content" class="row">
     <div id="tab_search">
       <form id="tab_search_form_search">
@@ -610,18 +610,12 @@
   <source id="preview-track_source" src="" type="audio/mpeg">
 </audio>
 
-<footer id="tab-nav" class="page-footer row tabs" style="border-top: 1px solid gray; z-index: 98;">
-    <li class="tab col s2"><a class="active" href="#tab_search">Search</a></li>
-    <li class="tab col s2"><a href="#tab_charts">Charts</a></li>
-    <li class="tab col s2"><a href="#tab_playlists">Playlists</a></li>
-    <li class="tab col s2"><a href="#tab_url">Download from URL</a></li>
-    <li class="tab col s2"><a href="#tab_downloads">Downloads</a></li>
-</footer>
-
-<footer class="indigo darken-1 center page-footer hide-on-med-and-down">
-    <div class="container">
-      &copy; Deezloader original code by <a class="white-text" href="https://boerse.to/members/zzmtv.3378614/">ZzMTV</a>.
-    </div>
+<footer id="tab-nav" class="page-footer row tabs" style="border-top: 1px solid gray; z-index: 2;">
+    <li class="tab col s2"><a class="material-icons" style="font-size:50px;" href="#tab_charts">format_list_bulleted</a></li>
+    <li class="tab col s2"><a class="material-icons" style="font-size:50px;" href="#tab_playlists">art_track</a></li>
+	<li class="tab col s2"><a class="active material-icons" style="font-size:50px;" href="#tab_search">search</a></li>
+    <li class="tab col s2"><a class="material-icons" style="font-size:50px;" href="#tab_url">link</a></li>
+    <li class="tab col s2"><a class="material-icons" style="font-size:50px;" href="#tab_downloads">file_download</a></li>
 </footer>
 
 <script>if (typeof module === 'object') {
