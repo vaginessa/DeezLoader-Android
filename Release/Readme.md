@@ -1,12 +1,28 @@
 # DeezLoader For Android 
 
-# Version 2.1.2 (Lastest version) Recomended version: arm
-##### Min android required version: Android 5 (Lollipop)
-##### Versión mínima de android requerida: Android 5 (Lollipop)
+# Version 2.1.3 (Latest version) Recomended version: arm
+##### Minimum Android version: Android 5.0 (Lollipop)
+##### Versión mínima de Android: Android 5.0 (Lollipop)
 
-### [Download DeezLoader-2.1.2-Universal.apk](https://gitlab.com/Nick80835/DeezLoader-Android/raw/master/Release/DeezLoader-2.1.2-universal-debug.apk)
+### [Download DeezLoader-2.1.3-Universal.apk](https://gitlab.com/Nick80835/DeezLoader-Android/raw/master/Release/DeezLoader-2.1.3-universal-debug.apk)
 
 # Changelog
+- 2.1.3
+    - Added the option to select between 128kbps, 320kbps or 1411kbps.
+    - Added a bottom tab navigation bar with icons to replace the scrolling tabs at the top.
+    - More of those bug fixes.
+
+- 2.1.2
+    - More bug fixes.
+    - Improved downloads tab spacing.
+
+- 2.1.1
+    - Fixed login bugs.
+    - Minor UI tweaks and fixes.
+
+- 2.1.0 (test build)
+    - Bug fixes and improved performance.
+
 - 2.0.9
     - Rolled back to deezloader 4.0.2 (is by far more stable, but i'll update again to the beauty of 4.1.x someday...)
     - Added back the webview in-app
@@ -59,17 +75,17 @@
     - Fixed a bug where the app randomly crashed when a song has been downloaded
 
 - 1.1.7
-    - For better experience, if the download folder is diferent to the default, the "create album/artist folder" are dissabled (the songs doesn't download if at least one of those options are selected). Thanks to Milo Joseph for help finding this bug :D
+    - For better experience, if the download folder is diferent to the default, the "create album/artist folder" are disabled (the songs doesn't download if at least one of those options are selected). Thanks to Milo Joseph for help finding this bug :D
     - Charts tab redesigned
-    - Start loading screen improved for better understeand of what is being done while the app starts
-    - Updated method to make android recognice new songs downloaded to the external storage propelly
+    - Start loading screen improved for better understanding of what is being done while the app starts
+    - Updated method to make android recognize new songs downloaded to the external storage properly
 
 - 1.1.6
-    - Replaced the webView with a better implementation of itself which is more stable at the time of showing the page
-    - Fixed a bug that crashed the app if the progress of a download isn't valid
+    - Replaced the webview with a better implementation of itself which is more stable at the time of showing the page
+    - Fixed a bug that crashed the app if the progress of a download wasn't valid
 
 - 1.1.5
-    - Added option to select another download path (in fact, it still download it to the default storage but if another folder has been selected, the app automaticaly move the file to the selected folder when the download has been completed)
+    - Added option to select another download path (in fact, it still downloads it to the default storage but if another folder has been selected, the app will automaticaly move the file to the selected folder when the download has been completed)
 
 - 1.1.4
     - Added notification on download canceled
