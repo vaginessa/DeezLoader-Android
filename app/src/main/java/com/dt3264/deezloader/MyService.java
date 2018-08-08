@@ -355,7 +355,6 @@ public class MyService extends Service {
 
     void scanNewSongExternal(File externalFile){
         new MediaScannerWrapper(context, externalFile.toString()).scan();
-
     }
 
     public class MediaScannerWrapper implements MediaScannerConnection.MediaScannerConnectionClient {

@@ -303,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay!
                     compruebaServidor();
-
                 } else {
                     // permission denied, boo!
                     Toast.makeText(this, "You should give the permission to use the app", Toast.LENGTH_SHORT).show();
@@ -341,6 +340,10 @@ public class MainActivity extends AppCompatActivity {
             if (nodeDirReference.exists()) {
                 deleteFolderRecursively(new File(nodeDir));
             }
+            //Delete settings file to prevent conflicts between versions.
+            File file = new File("/storage/emulated/0/Deezloader/config.json");
+            file.delete();
+
             //Copy the node project from assets into the application's data path.
             copyAssetFolder(getApplicationContext().getAssets(), "deezerLoader", nodeDir);
             saveLastUpdateTime();
