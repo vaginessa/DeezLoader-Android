@@ -10,4 +10,10 @@
     <string name="openInInternal">Open deezLoader here</string>
     <string name="faq">
     </string>
+    <string name="actualversion">Actual version:</string>
+    <string name="startserver">Starting server</string>
+    <string name="permission">You should give the permission to use the app</string>
+    <string name="exit_back">Do you want to exit the application? Downloads will be canceled</string>
+    <string name="confirmation">Yes</string>
+    <string name="denial">No</string>
 </resources>

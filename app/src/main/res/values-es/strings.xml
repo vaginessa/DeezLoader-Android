@@ -11,4 +11,10 @@
     <string name="openInInternal">Abrir deezLoader aquí</string>
     <string name="faq">
     </string>
+    <string name="actualversion">Versión actual:</string>
+    <string name="startserver">Iniciando servidor</string>
+    <string name="permission">Debes dar permiso para usar la aplicación</string>
+    <string name="exit_back">¿Quieres salir de la aplicación? Las descargas se cancelarán</string>
+    <string name="confirmation">Sí</string>
+    <string name="denial">No</string>
 </resources>
