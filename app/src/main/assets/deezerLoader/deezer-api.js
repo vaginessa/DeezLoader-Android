@@ -458,7 +458,7 @@ function getBlowfishKey(trackInfos) {
 
 Deezer.prototype.cancelDecryptTrack = function() {
 	if(this.reqStream) {
-		this.reqStream.abort();
+		this.decryptTrack.abort();
 		this.reqStream = null;
 		return true;
 	} else {
