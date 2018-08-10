@@ -3,7 +3,6 @@ package com.dt3264.deezloader;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,19 +12,14 @@ import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
-import android.widget.Toast;
 
-
-import java.io.Console;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -211,7 +205,7 @@ public class MyService extends Service {
         socket.on("siteReady", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                transmitMessage(new Message(1, "Server ready"));
+                transmitMessage(new Message(1, getString(R.string.serverReady)));
             }
         });
         socket.on("openLink", new Emitter.Listener() {
