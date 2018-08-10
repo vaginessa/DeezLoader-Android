@@ -164,6 +164,8 @@ io.sockets.on('connection', function (socket) {
 		if(configFile.userDefined.audioQuality == "128"){
             if(track.FILESIZE_MP3_128 > 0){
                 complete = track.FILESIZE_MP3_128;
+            }else if(track.FILESIZE_MP3_320 > 0){
+                complete = track.FILESIZE_MP3_320;
             }
         }
 
@@ -198,6 +200,8 @@ io.sockets.on('connection', function (socket) {
 		    if(configFile.userDefined.audioQuality == "128"){
                 if(track.FILESIZE_MP3_128 > 0){
                     complete = track.FILESIZE_MP3_128;
+                }else if(track.FILESIZE_MP3_320 > 0){
+                    complete = track.FILESIZE_MP3_320;
                 }
             }
 
