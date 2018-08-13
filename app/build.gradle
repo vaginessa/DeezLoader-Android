@@ -20,10 +20,9 @@ android {
     }
     splits {
         abi {
-            enable true
+            enable false
             reset()
             //include works separately of ndk{} and universalApk
-            include "armeabi-v7a", "x86"
             universalApk true
         }
     }

@@ -265,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     finish();
+                    System.exit(0);
                 }
             });
             builder.setNegativeButton(R.string.denial, new DialogInterface.OnClickListener() {
