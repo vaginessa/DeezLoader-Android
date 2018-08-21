@@ -19,10 +19,10 @@ const logger = require('./logger.js');
 const Spotify = require('spotify-web-api-node');
 const authCredentials = require('./authCredentials.js')
 
-//This is used to work with the listener html at the beginning of the app
+// This is used to work with the listener html at the beginning of the app
 app.use("/favicon.ico", express.static(__dirname + '/favicon.ico'));
 
-// Load Config File
+// Load config cile
 homedata = "/storage/emulated/0";
 userdata = homedata + "/Deezloader/";
 
@@ -223,7 +223,7 @@ io.sockets.on('connection', function (socket) {
                 }
             }
 
-		    let percentage = (progress / complete) * 100;
+		    let percentage = parseInt((progress/complete)*100);
 
 			if ((percentage - track.trackSocket.currentItem.percentage > 1) || (progress == complete)) {
 				track.trackSocket.currentItem.percentage = percentage;
@@ -238,7 +238,6 @@ io.sockets.on('connection', function (socket) {
 	function addToQueue(object) {
 		socket.downloadQueue.push(object);
 		socket.emit('addToQueue', object);
-
 		queueDownload(getNextDownload());
 	}
 

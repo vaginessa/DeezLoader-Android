@@ -7,8 +7,8 @@ android {
         applicationId "com.dt3264.deezloader"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 214
-        versionName "2.1.4"
+        versionCode 215
+        versionName "2.1.5"
         archivesBaseName = "DeezLoader-$versionName"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
@@ -20,9 +20,9 @@ android {
     }
     splits {
         abi {
-            enable false
+            enable true
             reset()
-            //include works separately of ndk{} and universalApk
+            include "armeabi-v7a", "x86"
             universalApk true
         }
     }

@@ -216,7 +216,7 @@ Deezer.prototype.getMePlaylists = function(callback) {
 Deezer.prototype.getTrack = function(id, quality, callback) {
 	var scopedid = id;
 	var self = this;
-	request.get({url: "https://www.deezer.com/uk/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
+	request.get({url: "https://www.deezer.com/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
 		var regex = new RegExp(/<script>window\.__DZR_APP_STATE__ = (.*)<\/script>/g);
 		var rexec = regex.exec(body);
 		var _data;
