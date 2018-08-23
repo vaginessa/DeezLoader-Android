@@ -17,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,10 +60,10 @@ public class MainActivity extends AppCompatActivity {
     /**
      * reloadNodeAppData when true, updates the node folder in the phone on each start
      * */
-    final boolean reloadNodeAppData = false;
+    final boolean reloadNodeAppData = true;
     final String actualVersion = "2.1.5";
     final String url = "http://localhost:1730";
-    final String telegramUrl = "https://t.me/deezloaderandroidportal";
+    final String telegramUrl = "https://t.me/joinchat/Ed1JxEfoci-zx-LME9xx_Q";
     int lastCompile;
     SharedPreferences sharedPreferences;
 
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     TextView updateTxt;
     @BindView(R.id.faq)
     TextView faqTxt;
+    @BindView(R.id.versionView)
+    TextView versionView;
 
 
     @Override
@@ -93,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Objects.requireNonNull(getSupportActionBar()).hide();
         preparaHandler();
-        infoView.setText(getText(R.string.actualversion)+ " " + actualVersion + '\n' + getText(R.string.serverLoadingText)  + '\n');
+        infoView.setText(getText(R.string.serverLoadingText));
+        versionView.setText(getText(R.string.actualversion) + " " + actualVersion);
         telegramButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 internalButton.setVisibility(View.VISIBLE);
                 faqTxt.setVisibility(View.VISIBLE);
                 snackbar.dismiss();
-                infoView.setText(getText(R.string.actualversion)+ " "  + actualVersion + '\n' + getText(R.string.serverReady) + '\n');
+                infoView.setText(getText(R.string.serverReady));
             }
         });
     }
@@ -194,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            updateTxt.setText("A new update (" + pasteResult[0].trim() + ") is available.\nChanges: \n" + pasteResult[2]);
+                            updateTxt.setText("A new update (" + pasteResult[0].trim() + ") is available.\nChanges:\n" + pasteResult[2]);
                             updateButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -203,7 +208,10 @@ public class MainActivity extends AppCompatActivity {
                                     startActivity(i);
                                 }
                             });
-                            updateTxt.setVisibility(View.VISIBLE);
+                            TextView updateTxt = findViewById(R.id.updateTxt);
+                            ViewGroup.LayoutParams params = updateTxt.getLayoutParams();
+                            params.height = WRAP_CONTENT;
+                            updateTxt.setLayoutParams(params);
                             updateButton.setVisibility(View.VISIBLE);
                         }
                     });
@@ -335,8 +343,8 @@ public class MainActivity extends AppCompatActivity {
                 deleteFolderRecursively(new File(nodeDir));
             }
             //Delete settings file to prevent conflicts between versions.
-            File file = new File("/storage/emulated/0/Deezloader/config.json");
-            file.delete();
+            //File file = new File("/storage/emulated/0/Deezloader/config.json");
+            //file.delete();
 
             //Copy the node project from assets into the application's data path.
             copyAssetFolder(getApplicationContext().getAssets(), "deezerLoader", nodeDir);

@@ -1,19 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeezLoader</string>
+    <string name="app_name">Deezloader</string>
     <string name="notificationService">Deezloader server is running</string>
-    <string name="serviceName">DeezLoader Service</string>
-    <string name="serverLoadingText">Loading, this could take up to 5 minutes.</string>
-    <string name="serverReady">Server ready.</string>
+    <string name="serviceName">Deezloader Service</string>
+    <string name="serverLoadingText">Loading, this could take up to 5 minutes</string>
+    <string name="serverReady">Server ready</string>
     <string name="updateButtonText">Click here for the latest version</string>
-    <string name="telegramChatButton">Telegram Chat Link -> Bugs / Questions / etc.</string>
-    <string name="openInExternal">Open deezLoader in an external browser</string>
-    <string name="openInInternal">Open deezLoader here</string>
-    <string name="faq">
-    </string>
-    <string name="actualversion">Actual version:</string>
+    <string name="telegramChatButton">Telegram Chat -> bugs, questions, etc.</string>
+    <string name="openInExternal">Open Deezloader in an external browser</string>
+    <string name="openInInternal">Open Deezloader here</string>
+    <string name="faq"></string>
+    <string name="actualversion">Version:</string>
     <string name="startserver">Starting server</string>
     <string name="permission">You should give the permission to use the app</string>
-    <string name="exit_back">Do you want to exit the application? Downloads will be canceled</string>
+    <string name="exit_back">Do you want to exit the application? Downloads will be cancelled</string>
     <string name="confirmation">Yes</string>
     <string name="denial">No</string>
 </resources>

@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeezLoader</string>
+    <string name="app_name">Deezloader</string>
     <string name="notificationService">O servidor Deezloader está executando</string>
-    <string name="serviceName">Serviço DeezLoader</string>
-    <string name="serverLoadingText">Carregando, isso pode levar até 5 minutos.</string>
-    <string name="serverReady">Servidor pronto.</string>
+    <string name="serviceName">Serviço Deezloader</string>
+    <string name="serverLoadingText">Carregando, isso pode levar até 5 minutos</string>
+    <string name="serverReady">Servidor pronto</string>
     <string name="updateButtonText">Clique aqui para a última versão</string>
-    <string name="telegramChatButton">Telegram Chat Link -> Erros / Perguntas / etc.</string>
+    <string name="telegramChatButton">Telegram Chat -> erros, perguntas, etc.</string>
     <string name="openInExternal">Abra o deezLoader em um navegador externo</string>
     <string name="openInInternal">Abra o deezLoader aqui</string>
-    <string name="faq">
-    </string>
+    <string name="faq"></string>
 </resources>
