@@ -10,11 +10,11 @@ function Deezer() {
 	this.apiUrl = "http://www.deezer.com/ajax/gw-light.php";
 	this.httpHeaders = {
 		"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.75 Safari/537.36",
-		"Content-Language": "en-US",
+		"Content-Language": "en-GB",
 		"Cache-Control": "max-age=0",
 		"Accept": "*/*",
 		"Accept-Charset": "utf-8,ISO-8859-1;q=0.7,*;q=0.3",
-		"Accept-Language": "en-US,en;q=0.9,en-US;q=0.8,en;q=0.7"
+		"Accept-Language": "en-GB,en;q=0.9,en-GB;q=0.8,en;q=0.7"
 	}
 	this.albumPicturesHost = "https://e-cdns-images.dzcdn.net/images/cover/";
 	this.reqStream = {}
@@ -216,7 +216,7 @@ Deezer.prototype.getMePlaylists = function(callback) {
 Deezer.prototype.getTrack = function(id, quality, callback) {
 	var scopedid = id;
 	var self = this;
-	request.get({url: "https://www.deezer.com/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
+	request.get({url: "https://www.deezer.com/en/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
 		var regex = new RegExp(/<script>window\.__DZR_APP_STATE__ = (.*)<\/script>/g);
 		var rexec = regex.exec(body);
 		var _data;
@@ -352,7 +352,7 @@ Deezer.prototype.track2ID = function(artist, track, callback, trim=false) {
 Deezer.prototype.hasTrackAlternative = function(id, callback) {
 	var scopedid = id;
 	var self = this;
-	request.get({url: "https://www.deezer.com/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
+	request.get({url: "https://www.deezer.com/en/track/"+id, headers: this.httpHeaders, jar: true}, (function(err, res, body) {
 		var regex = new RegExp(/<script>window\.__DZR_APP_STATE__ = (.*)<\/script>/g);
 		var rexec = regex.exec(body);
 		var _data;

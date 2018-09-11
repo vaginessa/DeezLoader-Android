@@ -12,7 +12,6 @@ public class BrowserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browser);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         vcm.github.webkit.proview.ProWebView webView = findViewById(R.id.webView);
         webView.clearCache(true);
         webView.clearCookies();

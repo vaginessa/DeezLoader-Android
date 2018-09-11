@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Objects.requireNonNull(getSupportActionBar()).hide();
         preparaHandler();
         infoView.setText(getText(R.string.serverLoadingText));
         versionView.setText(getText(R.string.actualversion) + " " + actualVersion);

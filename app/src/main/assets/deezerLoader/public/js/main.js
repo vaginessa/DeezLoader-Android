@@ -751,7 +751,7 @@ function addToQueue(url) {
 	}
 
 	if (alreadyInQueue(id)) {
-		M.toast({html: '<i class="material-icons">playlist_add_check</i>Already in download-queue!', displayLength: 5000, classes: 'rounded'});
+		M.toast({html: '<i class="material-icons">playlist_add_check</i>Already in download-queue!', displayLength: 5000, classes: ''});
 
 		return false;
 	}
@@ -762,7 +762,7 @@ function addToQueue(url) {
 	}
 	socket.emit("download" + type, {id: id, settings: userSettings});
 
-	M.toast({html: '<i class="material-icons">add</i>Added to download-queue', displayLength: 5000, classes: 'rounded'});
+	M.toast({html: '<i class="material-icons">add</i>Added to download-queue', displayLength: 5000, classes: ''});
 
 }
 
@@ -827,11 +827,11 @@ socket.on('updateQueue', function (data) {
 	if (data.failed == 0 && ((data.downloaded + data.failed) >= data.size)) {
 		$('#' + data.queueId).find('.eventBtn').html('<i class="material-icons">done</i>');
 		$('#' + data.queueId).addClass('finished');
-		M.toast({html: '<i class="material-icons">done</i>One download completed!', displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">done</i>One download completed!', displayLength: 5000, classes: ''})
 	} else if (data.downloaded == 0 && ((data.downloaded + data.failed) >= data.size)) {
 		$('#' + data.queueId).find('.eventBtn').html('<i class="material-icons">error</i>');
 		$('#' + data.queueId).addClass('error');
-		M.toast({html: '<i class="material-icons">error</i>One download failed!', displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">error</i>One download failed!', displayLength: 5000, classes: ''})
 	}
 });
 
@@ -842,13 +842,13 @@ socket.on("downloadProgress", function (data) {
 });
 
 socket.on("emptyDownloadQueue", function () {
-	M.toast({html: '<i class="material-icons">done_all</i>All downloads completed!', displayLength: 5000, classes: 'rounded'});
+	M.toast({html: '<i class="material-icons">done_all</i>All downloads completed!', displayLength: 5000, classes: ''});
 });
 
 socket.on("cancelDownload", function (data) {
 	$('#' + data.queueId).addClass('animated fadeOutRight').on('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
 		$(this).remove();
-		M.toast({html: '<i class="material-icons">clear</i>One download removed!', displayLength: 5000, classes: 'rounded'})
+		M.toast({html: '<i class="material-icons">clear</i>One download removed!', displayLength: 5000, classes: ''})
 	});
 });
 
