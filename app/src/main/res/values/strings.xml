@@ -10,10 +10,10 @@
     <string name="openInExternal">Open Deezloader in an external browser</string>
     <string name="openInInternal">Open Deezloader here</string>
     <string name="faq"></string>
-    <string name="actualversion">Version:</string>
-    <string name="startserver">Starting server</string>
-    <string name="permission">You should give the permission to use the app</string>
-    <string name="exit_back">Do you want to exit the application? Downloads will be cancelled</string>
-    <string name="confirmation">Yes</string>
-    <string name="denial">No</string>
+    <string name="actualversion" translatable="false">Version:</string>
+    <string name="startserver" translatable="false">Starting server</string>
+    <string name="permission" translatable="false">You should give the permission to use the app</string>
+    <string name="exit_back" translatable="false">Do you want to exit the application? Downloads will be cancelled</string>
+    <string name="confirmation" translatable="false">Yes</string>
+    <string name="denial" translatable="false">No</string>
 </resources>
