@@ -11,7 +11,7 @@ Now you can forget of the termux methodto run this tool, just download the apk a
 - Same as the desktop version
 - But adapted for the small screens
 
-# Downloads  (Latest: 2.1.5)
+# Downloads  (Latest: 2.1.6)
 - Always download the last release from [here](https://gitlab.com/Nick80835/DeezLoader-Android/tree/master/Release) 
 
 - P.D: I don't keep links to previous versions since it's easier to have the lastest version online for you)
@@ -25,7 +25,7 @@ Now you can forget of the termux methodto run this tool, just download the apk a
 
 # Crashes
 
-In case there's a crash in the app, a notification will be displayed, open it and send it to [this telegram group](https://t.me/joinchat/EPuiFwzIphPHwMn8BC8HEA) to keep improving the app.
+In case there's a crash in the app, a notification will be displayed, open it and send it to [this telegram group](https://t.me/joinchat/Ed1JxEfoci-dp-BWGRdVLg) to keep improving the app.
 
 # Credits
 ## Original Developer
