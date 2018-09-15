@@ -1,12 +1,15 @@
 # DeezLoader For Android 
 
-# Version 2.1.6 (Latest version)
+# Version 2.1.7 (Latest version)
 ##### Minimum Android version: Android 5.0 (Lollipop)
 ##### Versión mínima de Android: Android 5.0 (Lollipop)
 
-### [Download DeezLoader-2.1.6-universal-debug.apk](https://gitlab.com/Nick80835/DeezLoader-Android/raw/master/Release/DeezLoader-2.1.6-universal-debug.apk)
+### [Download DeezLoader-2.1.7-universal-debug.apk](https://gitlab.com/Nick80835/DeezLoader-Android/raw/master/Release/DeezLoader-2.1.7-universal-debug.apk)
 
 # Changelog
+- 2.1.7
+	- Fixes for smaller device screens.
+
 - 2.1.6
     - Slight UI overhaul, misc fixes.
 
